@@ -9,7 +9,10 @@ final class CalcomPoller: @unchecked Sendable {
         guard timer == nil else { return }
         let t = DispatchSource.makeTimerSource(queue: .global(qos: .background))
         t.schedule(deadline: .now() + 8, repeating: 300)
-        t.setEventHandler { [weak self] in self?.poll() }
+        t.setEventHandler { [weak self] in
+            guard IntegrationGate.isActive("integration_calcom") else { return }
+            self?.poll()
+        }
         t.resume()
         timer = t
     }
@@ -35,9 +38,9 @@ final class CalcomPoller: @unchecked Sendable {
             let code = (response as? HTTPURLResponse)?.statusCode ?? 0
             if code != 200 {
                 let msg: String
-                if code == 401 { msg = "Invalid API key (401)" }
-                else if code == 0 { msg = error?.localizedDescription ?? "No connection" }
-                else { msg = "API error \(code)" }
+                if code == 401 { msg = String(localized: "Invalid API key (401)") }
+                else if code == 0 { msg = error?.localizedDescription ?? String(localized: "No connection") }
+                else { msg = String(localized: "API error \(code)") }
                 DispatchQueue.main.async { AppState.shared.calcomError = msg }
                 return
             }
@@ -60,7 +63,7 @@ final class CalcomPoller: @unchecked Sendable {
         else if let s = b["id"] as? String, let i = Int(s) { id = i }
         else { return nil }
 
-        let title  = (b["title"] as? String) ?? "Meeting"
+        let title  = (b["title"] as? String) ?? String(localized: "Meeting")
         let status = (b["status"] as? String) ?? "accepted"
         guard let startStr = (b["start"] as? String) ?? (b["startTime"] as? String) else { return nil }
 

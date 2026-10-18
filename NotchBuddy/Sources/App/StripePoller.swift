@@ -16,7 +16,10 @@ final class StripePoller: @unchecked Sendable {
         guard timer == nil else { return }
         let t = DispatchSource.makeTimerSource(queue: .global(qos: .background))
         t.schedule(deadline: .now() + 6, repeating: 30)
-        t.setEventHandler { [weak self] in self?.poll() }
+        t.setEventHandler { [weak self] in
+            guard IntegrationGate.isActive("integration_stripe") else { return }
+            self?.poll()
+        }
         t.resume()
         timer = t
     }
@@ -44,10 +47,10 @@ final class StripePoller: @unchecked Sendable {
             let code = (response as? HTTPURLResponse)?.statusCode ?? 0
             if code != 200 {
                 let errMsg: String
-                if code == 401 { errMsg = "Invalid API key (401)" }
-                else if code == 403 { errMsg = "Use secret key (sk_live_… not pk_live_…)" }
-                else if code == 0   { errMsg = error?.localizedDescription ?? "No connection" }
-                else                { errMsg = "API error \(code)" }
+                if code == 401 { errMsg = String(localized: "Invalid API key (401)") }
+                else if code == 403 { errMsg = String(localized: "Use secret key (sk_live_… not pk_live_…)") }
+                else if code == 0   { errMsg = error?.localizedDescription ?? String(localized: "No connection") }
+                else                { errMsg = String(localized: "API error \(code)") }
                 DispatchQueue.main.async { AppState.shared.stripeError = errMsg }
                 return
             }

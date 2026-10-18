@@ -1,0 +1,4769 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Open Coucou": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir Coucou"
+          }
+        }
+      }
+    },
+    "Settings…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajustes…"
+          }
+        }
+      }
+    },
+    "Quit": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Salir"
+          }
+        }
+      }
+    },
+    "Settings — Coucou": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajustes — Coucou"
+          }
+        }
+      }
+    },
+    "Connect Ollama in Settings → Chat first.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conecta Ollama primero en Ajustes → Chat."
+          }
+        }
+      }
+    },
+    "Connect LM Studio in Settings → Chat first.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conecta LM Studio primero en Ajustes → Chat."
+          }
+        }
+      }
+    },
+    "No API key — add it in Settings.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falta la clave API: añádela en Ajustes."
+          }
+        }
+      }
+    },
+    "No models yet. Download one in Ollama first.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay modelos. Descarga uno en Ollama primero."
+          }
+        }
+      }
+    },
+    "No models yet. Download one in LM Studio first.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay modelos. Descarga uno en LM Studio primero."
+          }
+        }
+      }
+    },
+    "Cannot reach %@. Is the server running?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se puede conectar con %@. ¿El servidor está en marcha?"
+          }
+        }
+      }
+    },
+    "Failed to load models. Check your API key.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudieron cargar los modelos. Revisa tu clave API."
+          }
+        }
+      }
+    },
+    "Ready": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Listo"
+          }
+        }
+      }
+    },
+    "Canceled": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelado"
+          }
+        }
+      }
+    },
+    "Error": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error"
+          }
+        }
+      }
+    },
+    "just now": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ahora mismo"
+          }
+        }
+      }
+    },
+    "now": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ahora"
+          }
+        }
+      }
+    },
+    "z": {
+      "shouldTranslate": false
+    },
+    "Subscription chat needs the direct-download build of Coucou.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El chat con suscripción requiere la versión de Coucou de descarga directa."
+          }
+        }
+      }
+    },
+    "The %@ command was not found. Install it, then sign in from Settings → Chat.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se encontró el comando %@. Instálalo y luego inicia sesión desde Ajustes → Chat."
+          }
+        }
+      }
+    },
+    "Not signed in to %@. Open Settings → Chat and press Sign in.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No has iniciado sesión en %@. Abre Ajustes → Chat y pulsa Iniciar sesión."
+          }
+        }
+      }
+    },
+    "The CLI took too long to answer.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El CLI tardó demasiado en responder."
+          }
+        }
+      }
+    },
+    "%@ exited with code %d.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ terminó con el código %d."
+          }
+        }
+      }
+    },
+    "%@ returned an empty answer.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ devolvió una respuesta vacía."
+          }
+        }
+      }
+    },
+    "Invalid API key (401)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clave API no válida (401)"
+          }
+        }
+      }
+    },
+    "API error %lld": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error de API %lld"
+          }
+        }
+      }
+    },
+    "No connection": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin conexión"
+          }
+        }
+      }
+    },
+    "Meeting": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reunión"
+          }
+        }
+      }
+    },
+    "Claude plan": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan de Claude"
+          }
+        }
+      }
+    },
+    "%lld min ago": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace %lld min"
+          }
+        }
+      }
+    },
+    "%lld h ago": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace %lld h"
+          }
+        }
+      }
+    },
+    "Waiting for a Claude Code reply": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esperando una respuesta de Claude Code"
+          }
+        }
+      }
+    },
+    "5 hours": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 horas"
+          }
+        }
+      }
+    },
+    "Week": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Semana"
+          }
+        }
+      }
+    },
+    "—": {
+      "shouldTranslate": false
+    },
+    "%lld%%": {
+      "shouldTranslate": false
+    },
+    "in %lld h %lld": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "en %lld h %lld"
+          }
+        }
+      }
+    },
+    "in %lld min": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "en %lld min"
+          }
+        }
+      }
+    },
+    "Resetting…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiniciando…"
+          }
+        }
+      }
+    },
+    "API key missing. Open settings.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falta la clave API. Abre los ajustes."
+          }
+        }
+      }
+    },
+    "%@ API key missing. Configure it in Settings.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falta la clave API de %@. Configúrala en Ajustes."
+          }
+        }
+      }
+    },
+    "Unexpected response format": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Formato de respuesta inesperado"
+          }
+        }
+      }
+    },
+    "HTTP %lld": {
+      "shouldTranslate": false
+    },
+    "Connect %@ in Settings → Chat first.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conecta %@ primero en Ajustes → Chat."
+          }
+        }
+      }
+    },
+    "Ollama isn't running. Open it, then ask again.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ollama no está en marcha. Ábrelo y vuelve a preguntar."
+          }
+        }
+      }
+    },
+    "Start the local server in LM Studio, then ask again.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inicia el servidor local en LM Studio y vuelve a preguntar."
+          }
+        }
+      }
+    },
+    "%@ isn't installed. Pick another model above the chat box.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no está instalado. Elige otro modelo sobre el cuadro de chat."
+          }
+        }
+      }
+    },
+    "Model not found: %@. Pick another one in Settings.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelo no encontrado: %@. Elige otro en Ajustes."
+          }
+        }
+      }
+    },
+    "No response text.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La respuesta no tiene texto."
+          }
+        }
+      }
+    },
+    "Unexpected API response.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Respuesta de la API inesperada."
+          }
+        }
+      }
+    },
+    "Anthropic API key missing. Open settings to configure it.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falta la clave API de Anthropic. Abre los ajustes para configurarla."
+          }
+        }
+      }
+    },
+    "Claude's response": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Respuesta de Claude"
+          }
+        }
+      }
+    },
+    "unknown error": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "error desconocido"
+          }
+        }
+      }
+    },
+    "Result": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resultado"
+          }
+        }
+      }
+    },
+    "Handled in Cursor.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resuelto en Cursor."
+          }
+        }
+      }
+    },
+    "Handled in Codex.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resuelto en Codex."
+          }
+        }
+      }
+    },
+    "Handled in VS Code.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resuelto en VS Code."
+          }
+        }
+      }
+    },
+    "⚠ failed": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⚠ falló"
+          }
+        }
+      }
+    },
+    "+ subagent": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ subagente"
+          }
+        }
+      }
+    },
+    "• subagent done": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "• subagente terminado"
+          }
+        }
+      }
+    },
+    "Runs": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ejecuta"
+          }
+        }
+      }
+    },
+    "Reads": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lee"
+          }
+        }
+      }
+    },
+    "Writes": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Escribe"
+          }
+        }
+      }
+    },
+    "Edits": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edita"
+          }
+        }
+      }
+    },
+    "Searches": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Busca"
+          }
+        }
+      }
+    },
+    "Web search": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Búsqueda web"
+          }
+        }
+      }
+    },
+    "Fetches": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descarga"
+          }
+        }
+      }
+    },
+    "Tasks": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tareas"
+          }
+        }
+      }
+    },
+    "Agent": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agente"
+          }
+        }
+      }
+    },
+    "Lists": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lista"
+          }
+        }
+      }
+    },
+    "Notebook": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuaderno"
+          }
+        }
+      }
+    },
+    "Still waiting in Cursor.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sigue esperando en Cursor."
+          }
+        }
+      }
+    },
+    "Still waiting in Codex.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sigue esperando en Codex."
+          }
+        }
+      }
+    },
+    "Still waiting in VS Code.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sigue esperando en VS Code."
+          }
+        }
+      }
+    },
+    "Tests": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pruebas"
+          }
+        }
+      }
+    },
+    "~/.claude/settings.json: \"hooks\" has an unexpected type — Coucou has not touched it.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~/.claude/settings.json: \"hooks\" tiene un tipo inesperado — Coucou no lo ha tocado."
+          }
+        }
+      }
+    },
+    "~/.claude/settings.json changed since preview. Refresh and try again.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~/.claude/settings.json cambió desde la vista previa. Actualiza e inténtalo de nuevo."
+          }
+        }
+      }
+    },
+    "Could not back up %@: %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo hacer la copia de seguridad de %@: %@"
+          }
+        }
+      }
+    },
+    "%@ is not valid JSON — Coucou has not touched it.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no es un JSON válido — Coucou no lo ha tocado."
+          }
+        }
+      }
+    },
+    "%@ cannot be read — Coucou has not touched it.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no se puede leer — Coucou no lo ha tocado."
+          }
+        }
+      }
+    },
+    "Command Line Tools are required but not installed. Run: xcode-select --install": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hacen falta las Command Line Tools y no están instaladas. Ejecuta: xcode-select --install"
+          }
+        }
+      }
+    },
+    "No Gemini CLI hooks to remove.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay hooks de Gemini CLI que quitar."
+          }
+        }
+      }
+    },
+    "~/.gemini/settings.json: \"hooks\" has an unexpected type — Coucou has not touched it.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~/.gemini/settings.json: \"hooks\" tiene un tipo inesperado — Coucou no lo ha tocado."
+          }
+        }
+      }
+    },
+    "~/.gemini/settings.json: \"hooks\"[\"%@\"] has an unexpected type — Coucou has not touched it.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~/.gemini/settings.json: \"hooks\"[\"%@\"] tiene un tipo inesperado — Coucou no lo ha tocado."
+          }
+        }
+      }
+    },
+    "~/.gemini/settings.json changed since preview. Refresh and try again.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~/.gemini/settings.json cambió desde la vista previa. Actualiza e inténtalo de nuevo."
+          }
+        }
+      }
+    },
+    "No Antigravity hooks to remove.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay hooks de Antigravity que quitar."
+          }
+        }
+      }
+    },
+    "~/.gemini/config/hooks.json changed since preview. Refresh and try again.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~/.gemini/config/hooks.json cambió desde la vista previa. Actualiza e inténtalo de nuevo."
+          }
+        }
+      }
+    },
+    "No Codex hooks to remove.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay hooks de Codex que quitar."
+          }
+        }
+      }
+    },
+    "~/.codex/hooks.json: \"hooks\" has an unexpected type — Coucou has not touched it.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~/.codex/hooks.json: \"hooks\" tiene un tipo inesperado — Coucou no lo ha tocado."
+          }
+        }
+      }
+    },
+    "~/.codex/hooks.json: \"hooks\"[\"%@\"] has an unexpected type — Coucou has not touched it.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~/.codex/hooks.json: \"hooks\"[\"%@\"] tiene un tipo inesperado — Coucou no lo ha tocado."
+          }
+        }
+      }
+    },
+    "~/.codex/hooks.json changed since preview. Refresh and try again.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "~/.codex/hooks.json cambió desde la vista previa. Actualiza e inténtalo de nuevo."
+          }
+        }
+      }
+    },
+    "Default model of your plan": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelo por defecto de tu plan"
+          }
+        }
+      }
+    },
+    "%lld/%lld": {
+      "shouldTranslate": false
+    },
+    "Ask Claude": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preguntar a Claude"
+          }
+        }
+      }
+    },
+    "Nothing running right now.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay nada en marcha ahora."
+          }
+        }
+      }
+    },
+    "Drop a file or window, or ask me anything.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suelta un archivo o una ventana, o pregúntame lo que quieras."
+          }
+        }
+      }
+    },
+    "needs permission": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "necesita permiso"
+          }
+        }
+      }
+    },
+    "Deny": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Denegar"
+          }
+        }
+      }
+    },
+    "Allow": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permitir"
+          }
+        }
+      }
+    },
+    "Always": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siempre"
+          }
+        }
+      }
+    },
+    "Send": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar"
+          }
+        }
+      }
+    },
+    "Next": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Siguiente"
+          }
+        }
+      }
+    },
+    "Claude Code is asking": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude Code pregunta"
+          }
+        }
+      }
+    },
+    "Reply in terminal": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Responder en el terminal"
+          }
+        }
+      }
+    },
+    "Your answer…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu respuesta…"
+          }
+        }
+      }
+    },
+    "✕": {
+      "shouldTranslate": false
+    },
+    "Other…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Otro…"
+          }
+        }
+      }
+    },
+    "Workflow stopped.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Workflow detenido."
+          }
+        }
+      }
+    },
+    "Gmail node timed out after 30s. Retry or open n8n.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El nodo de Gmail agotó el tiempo tras 30 s. Reintenta o abre n8n."
+          }
+        }
+      }
+    },
+    "n8n": {
+      "shouldTranslate": false
+    },
+    "Retry": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reintentar"
+          }
+        }
+      }
+    },
+    "Open in n8n": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir en n8n"
+          }
+        }
+      }
+    },
+    "Claude Code finished": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude Code terminó"
+          }
+        }
+      }
+    },
+    "Session finished": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sesión terminada"
+          }
+        }
+      }
+    },
+    "Open terminal": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir terminal"
+          }
+        }
+      }
+    },
+    "OK": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "Too many hits at once.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demasiados golpes a la vez."
+          }
+        }
+      }
+    },
+    "Give me a sec — back to work in three seconds.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dame un segundo: vuelvo al trabajo en tres segundos."
+          }
+        }
+      }
+    },
+    "Drop your files here": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suelta tus archivos aquí"
+          }
+        }
+      }
+    },
+    "PDF": {
+      "shouldTranslate": false
+    },
+    "Images": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imágenes"
+          }
+        }
+      }
+    },
+    "Code": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Código"
+          }
+        }
+      }
+    },
+    "Docs": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Documentos"
+          }
+        }
+      }
+    },
+    "  %@": {
+      "shouldTranslate": false
+    },
+    "Uploading %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subiendo %@"
+          }
+        }
+      }
+    },
+    "%lld %%": {
+      "shouldTranslate": false
+    },
+    "File": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivo"
+          }
+        }
+      }
+    },
+    "file": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "archivo"
+          }
+        }
+      }
+    },
+    "%@ is ready.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ está listo."
+          }
+        }
+      }
+    },
+    "What do you want to do with it?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Qué quieres hacer con él?"
+          }
+        }
+      }
+    },
+    "Ask a question": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hacer una pregunta"
+          }
+        }
+      }
+    },
+    "Send by email": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviar por correo"
+          }
+        }
+      }
+    },
+    "To": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para"
+          }
+        }
+      }
+    },
+    "Subject": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asunto"
+          }
+        }
+      }
+    },
+    "New email": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuevo correo"
+          }
+        }
+      }
+    },
+    "with": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "con"
+          }
+        }
+      }
+    },
+    "Sending…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enviando…"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancelar"
+          }
+        }
+      }
+    },
+    "Set sender address in Settings.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configura la dirección del remitente en Ajustes."
+          }
+        }
+      }
+    },
+    "Missing recipient.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Falta el destinatario."
+          }
+        }
+      }
+    },
+    "Resend error — check API key & sender.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error de Resend: revisa la clave API y el remitente."
+          }
+        }
+      }
+    },
+    "Email sent to %@.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correo enviado a %@."
+          }
+        }
+      }
+    },
+    "Mail error: %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error de correo: %@"
+          }
+        }
+      }
+    },
+    "unknown": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "desconocido"
+          }
+        }
+      }
+    },
+    "Ask me anything…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pregúntame lo que quieras…"
+          }
+        }
+      }
+    },
+    "Continue…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuar…"
+          }
+        }
+      }
+    },
+    "Loading models…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cargando modelos…"
+          }
+        }
+      }
+    },
+    "Claude is reading %@…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude está leyendo %@…"
+          }
+        }
+      }
+    },
+    "Claude is searching…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude está buscando…"
+          }
+        }
+      }
+    },
+    "Open": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir"
+          }
+        }
+      }
+    },
+    "Copy": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiar"
+          }
+        }
+      }
+    },
+    "Close": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar"
+          }
+        }
+      }
+    },
+    "Automation not allowed": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Automatización no permitida"
+          }
+        }
+      }
+    },
+    "Playing · %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reproduciendo · %@"
+          }
+        }
+      }
+    },
+    "Not playing": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin reproducir"
+          }
+        }
+      }
+    },
+    "Coming soon": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Próximamente"
+          }
+        }
+      }
+    },
+    "Hooks installed": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hooks instalados"
+          }
+        }
+      }
+    },
+    "Connected · %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conectado · %@"
+          }
+        }
+      }
+    },
+    "Key configured · %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clave configurada · %@"
+          }
+        }
+      }
+    },
+    "Connected · loading…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conectado · cargando…"
+          }
+        }
+      }
+    },
+    "Hooks not installed": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hooks no instalados"
+          }
+        }
+      }
+    },
+    "Not connected": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No conectado"
+          }
+        }
+      }
+    },
+    "Key not configured": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clave sin configurar"
+          }
+        }
+      }
+    },
+    "Unknown": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desconocido"
+          }
+        }
+      }
+    },
+    "Integration": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Integración"
+          }
+        }
+      }
+    },
+    "Open Visual Studio Code": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir Visual Studio Code"
+          }
+        }
+      }
+    },
+    "Open Cursor": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir Cursor"
+          }
+        }
+      }
+    },
+    "Open Codex": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir Codex"
+          }
+        }
+      }
+    },
+    "Chat with %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chatear con %@"
+          }
+        }
+      }
+    },
+    "Open Music": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir Música"
+          }
+        }
+      }
+    },
+    "Open Settings…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir Ajustes…"
+          }
+        }
+      }
+    },
+    "Open %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir %@"
+          }
+        }
+      }
+    },
+    "Refresh": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar"
+          }
+        }
+      }
+    },
+    "Workflow": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Workflow"
+          }
+        }
+      }
+    },
+    "Vercel": {
+      "shouldTranslate": false
+    },
+    "Deployments": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Despliegues"
+          }
+        }
+      }
+    },
+    "%@ ago": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hace %@"
+          }
+        }
+      }
+    },
+    "Resend": {
+      "shouldTranslate": false
+    },
+    "Emails": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correos"
+          }
+        }
+      }
+    },
+    "%lld": {
+      "shouldTranslate": false
+    },
+    "GitHub": {
+      "shouldTranslate": false
+    },
+    "Overview": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Resumen"
+          }
+        }
+      }
+    },
+    "Total stars": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estrellas totales"
+          }
+        }
+      }
+    },
+    "Repositories": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Repositorios"
+          }
+        }
+      }
+    },
+    "Stripe": {
+      "shouldTranslate": false
+    },
+    "Payments": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pagos"
+          }
+        }
+      }
+    },
+    "+%@": {
+      "shouldTranslate": false
+    },
+    "Payment": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pago"
+          }
+        }
+      }
+    },
+    "Cal.com": {
+      "shouldTranslate": false
+    },
+    "Schedule": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agendar"
+          }
+        }
+      }
+    },
+    "No calls scheduled": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay llamadas programadas"
+          }
+        }
+      }
+    },
+    "Notion": {
+      "shouldTranslate": false
+    },
+    "Recent": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recientes"
+          }
+        }
+      }
+    },
+    "Success": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correcto"
+          }
+        }
+      }
+    },
+    "Failed": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fallido"
+          }
+        }
+      }
+    },
+    "Completed successfully.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completado correctamente."
+          }
+        }
+      }
+    },
+    "No error details available.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay detalles del error."
+          }
+        }
+      }
+    },
+    "Allow Coucou to control Music": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Permitir que Coucou controle Música"
+          }
+        }
+      }
+    },
+    "Apple Music": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple Music"
+          }
+        }
+      }
+    },
+    "Sound": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sonido"
+          }
+        }
+      }
+    },
+    "Auto-close · %llds": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cierre automático · %llds"
+          }
+        }
+      }
+    },
+    "%llds": {
+      "shouldTranslate": false
+    },
+    "Model '%@' is not installed.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El modelo '%@' no está instalado."
+          }
+        }
+      }
+    },
+    "→ %@ · %lld item": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "→ %@ · %lld elemento"
+          }
+        }
+      }
+    },
+    "→ %@ · %lld items": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "→ %@ · %lld elementos"
+          }
+        }
+      }
+    },
+    "Untitled": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin título"
+          }
+        }
+      }
+    },
+    "Where you code": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Donde programas"
+          }
+        }
+      }
+    },
+    "Agents": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agentes"
+          }
+        }
+      }
+    },
+    "AI for the chat": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "IA para el chat"
+          }
+        }
+      }
+    },
+    "Services": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Servicios"
+          }
+        }
+      }
+    },
+    "Chat": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chat"
+          }
+        }
+      }
+    },
+    "Coucou": {
+      "shouldTranslate": false
+    },
+    "General": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "General"
+          }
+        }
+      }
+    },
+    "Active pills": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pills activos"
+          }
+        }
+      }
+    },
+    "Integrations": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Integraciones"
+          }
+        }
+      }
+    },
+    "Claude Code Hooks": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hooks de Claude Code"
+          }
+        }
+      }
+    },
+    "Gemini CLI Hooks": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hooks de Gemini CLI"
+          }
+        }
+      }
+    },
+    "Antigravity Hooks": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hooks de Antigravity"
+          }
+        }
+      }
+    },
+    "Codex Hooks": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hooks de Codex"
+          }
+        }
+      }
+    },
+    "Plan usage": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uso del plan"
+          }
+        }
+      }
+    },
+    "Anthropic API": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API de Anthropic"
+          }
+        }
+      }
+    },
+    "Chat — other providers": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chat — otros proveedores"
+          }
+        }
+      }
+    },
+    "Subscription (official CLI)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suscripción (CLI oficial)"
+          }
+        }
+      }
+    },
+    "Local models": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelos locales"
+          }
+        }
+      }
+    },
+    "Behavior": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comportamiento"
+          }
+        }
+      }
+    },
+    "Hotkey": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atajo"
+          }
+        }
+      }
+    },
+    "Startup": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inicio"
+          }
+        }
+      }
+    },
+    "Enable sounds": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activar sonidos"
+          }
+        }
+      }
+    },
+    "Volume": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volumen"
+          }
+        }
+      }
+    },
+    "Language": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Idioma"
+          }
+        }
+      }
+    },
+    "Close after": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cerrar tras"
+          }
+        }
+      }
+    },
+    "s inactive": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "s de inactividad"
+          }
+        }
+      }
+    },
+    "60": {
+      "shouldTranslate": false
+    },
+    "Hide after": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ocultar tras"
+          }
+        }
+      }
+    },
+    "min without movement": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "min sin movimiento"
+          }
+        }
+      }
+    },
+    "3": {
+      "shouldTranslate": false
+    },
+    "System": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sistema"
+          }
+        }
+      }
+    },
+    "Restart Coucou to apply the new language.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reinicia Coucou para aplicar el nuevo idioma."
+          }
+        }
+      }
+    },
+    "Restart now": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reiniciar ahora"
+          }
+        }
+      }
+    },
+    "Show island with shortcut": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar la isla con el atajo"
+          }
+        }
+      }
+    },
+    "Shortcut": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atajo"
+          }
+        }
+      }
+    },
+    "presses this → island opens": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "al pulsarlo → se abre la isla"
+          }
+        }
+      }
+    },
+    "Launch at Mac startup": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir al iniciar el Mac"
+          }
+        }
+      }
+    },
+    "❌ Startup: %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "❌ Inicio: %@"
+          }
+        }
+      }
+    },
+    "Choose the tools you use. Coucou only shows what you declare here.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige las herramientas que usas. Coucou solo muestra lo que declares aquí."
+          }
+        }
+      }
+    },
+    "%lld/4 slots used": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld/4 huecos usados"
+          }
+        }
+      }
+    },
+    "Main": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Principal"
+          }
+        }
+      }
+    },
+    "nb-hook : %@": {
+      "shouldTranslate": false
+    },
+    "Update hooks": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Actualizar hooks"
+          }
+        }
+      }
+    },
+    "Hooks outdated — update them to answer Claude's questions from the notch": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hooks desactualizados: actualízalos para responder a las preguntas de Claude desde el notch"
+          }
+        }
+      }
+    },
+    "Review the JSON below before confirming.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Revisa el JSON de abajo antes de confirmar."
+          }
+        }
+      }
+    },
+    "Install hooks": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalar hooks"
+          }
+        }
+      }
+    },
+    "Uninstall": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desinstalar"
+          }
+        }
+      }
+    },
+    "✓ Hooks removed.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Hooks eliminados."
+          }
+        }
+      }
+    },
+    "Confirm & write": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirmar y escribir"
+          }
+        }
+      }
+    },
+    "✓ Hooks installed in ~/.claude/settings.json": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Hooks instalados en ~/.claude/settings.json"
+          }
+        }
+      }
+    },
+    "❌ Write error: %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "❌ Error al escribir: %@"
+          }
+        }
+      }
+    },
+    "Hooks installed — restart Gemini CLI to activate": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hooks instalados: reinicia Gemini CLI para activarlos"
+          }
+        }
+      }
+    },
+    "✓ Gemini CLI hooks installed in ~/.gemini/settings.json": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Hooks de Gemini CLI instalados en ~/.gemini/settings.json"
+          }
+        }
+      }
+    },
+    "✓ Gemini CLI hooks removed.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Hooks de Gemini CLI eliminados."
+          }
+        }
+      }
+    },
+    "Hooks installed — restart Antigravity to activate": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hooks instalados: reinicia Antigravity para activarlos"
+          }
+        }
+      }
+    },
+    "✓ Antigravity hooks installed in ~/.gemini/config/hooks.json": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Hooks de Antigravity instalados en ~/.gemini/config/hooks.json"
+          }
+        }
+      }
+    },
+    "✓ Antigravity hooks removed.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Hooks de Antigravity eliminados."
+          }
+        }
+      }
+    },
+    "Hooks installed — open Codex and run /hooks or open Hooks in the app's settings to trust them": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hooks instalados: abre Codex y ejecuta /hooks, o abre Hooks en los ajustes de la app, para confiar en ellos"
+          }
+        }
+      }
+    },
+    "✓ Codex hooks installed — run /hooks in Codex or open Hooks in the app's settings to trust them.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Hooks de Codex instalados: ejecuta /hooks en Codex, o abre Hooks en los ajustes de la app, para confiar en ellos."
+          }
+        }
+      }
+    },
+    "✓ Codex hooks removed.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Hooks de Codex eliminados."
+          }
+        }
+      }
+    },
+    "Shows your Claude plan usage (5-hour and weekly limits) in the notch header. Coucou adds a status line relay to ~/.claude/settings.json. If you already have a status line, it keeps working as before. Pro and Max plans only.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muestra el uso de tu plan de Claude (límites de 5 horas y semanal) en la cabecera del notch. Coucou añade un relé de línea de estado a ~/.claude/settings.json. Si ya tienes una línea de estado, sigue funcionando como antes. Solo planes Pro y Max."
+          }
+        }
+      }
+    },
+    "Show in the notch": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar en el notch"
+          }
+        }
+      }
+    },
+    "Relay: installed": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relé: instalado"
+          }
+        }
+      }
+    },
+    "Relay: not installed": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Relé: no instalado"
+          }
+        }
+      }
+    },
+    "Uninstall relay": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desinstalar relé"
+          }
+        }
+      }
+    },
+    "Install relay": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalar relé"
+          }
+        }
+      }
+    },
+    "✓ Status line installed.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Línea de estado instalada."
+          }
+        }
+      }
+    },
+    "✓ Status line removed.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Línea de estado eliminada."
+          }
+        }
+      }
+    },
+    "Used by the chat. The list comes from your Anthropic account.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lo usa el chat. La lista viene de tu cuenta de Anthropic."
+          }
+        }
+      }
+    },
+    "API key (sk-ant-…)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clave API (sk-ant-…)"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar"
+          }
+        }
+      }
+    },
+    "Model": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelo"
+          }
+        }
+      }
+    },
+    "Model ID (e.g. claude-sonnet-4-6)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ID del modelo (p. ej. claude-sonnet-4-6)"
+          }
+        }
+      }
+    },
+    "✓ Key saved.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Clave guardada."
+          }
+        }
+      }
+    },
+    "Custom…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personalizado…"
+          }
+        }
+      }
+    },
+    "To use Google Gemini, OpenAI or MiniMax from the chat. Keys are stored in the Keychain.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Para usar Google Gemini, OpenAI o MiniMax desde el chat. Las claves se guardan en el Llavero."
+          }
+        }
+      }
+    },
+    "Models: MiniMax-M3 and MiniMax-M3.1-Flash-Preview.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modelos: MiniMax-M3 y MiniMax-M3.1-Flash-Preview."
+          }
+        }
+      }
+    },
+    "API key (AI Studio)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clave API (AI Studio)"
+          }
+        }
+      }
+    },
+    "API key (sk-…)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clave API (sk-…)"
+          }
+        }
+      }
+    },
+    "API key (MiniMax platform)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clave API (plataforma MiniMax)"
+          }
+        }
+      }
+    },
+    "Google AI": {
+      "shouldTranslate": false
+    },
+    "✓ Google key saved.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Clave de Google guardada."
+          }
+        }
+      }
+    },
+    "OpenAI": {
+      "shouldTranslate": false
+    },
+    "✓ OpenAI key saved.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Clave de OpenAI guardada."
+          }
+        }
+      }
+    },
+    "MiniMax": {
+      "shouldTranslate": false
+    },
+    "✓ MiniMax key saved.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Clave de MiniMax guardada."
+          }
+        }
+      }
+    },
+    "Use your Claude or ChatGPT plan instead of an API key. Coucou runs the official `claude` and `codex` tools, which open their own sign-in window. Coucou never sees your token.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usa tu plan de Claude o de ChatGPT en lugar de una clave API. Coucou ejecuta las herramientas oficiales `claude` y `codex`, que abren su propia ventana de inicio de sesión. Coucou nunca ve tu token."
+          }
+        }
+      }
+    },
+    "Claude plan (Claude Code)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan de Claude (Claude Code)"
+          }
+        }
+      }
+    },
+    "ChatGPT plan (Codex)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plan de ChatGPT (Codex)"
+          }
+        }
+      }
+    },
+    "Connect to a local model server. No API key needed.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conéctate a un servidor de modelos local. No hace falta clave API."
+          }
+        }
+      }
+    },
+    "Connecting…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conectando…"
+          }
+        }
+      }
+    },
+    "Connect": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conectar"
+          }
+        }
+      }
+    },
+    "http://127.0.0.1:11434": {
+      "shouldTranslate": false
+    },
+    "Disconnect": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Desconectar"
+          }
+        }
+      }
+    },
+    "http://127.0.0.1:1234": {
+      "shouldTranslate": false
+    },
+    "Ollama": {
+      "shouldTranslate": false
+    },
+    "Connected": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conectado"
+          }
+        }
+      }
+    },
+    "No models yet — download one in %@ first.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay modelos: descarga uno en %@ primero."
+          }
+        }
+      }
+    },
+    "✓ Connected · 1 model": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Conectado · 1 modelo"
+          }
+        }
+      }
+    },
+    "✓ Connected · %lld models": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Conectado · %lld modelos"
+          }
+        }
+      }
+    },
+    "Couldn't reach %@ at %@. Is it running?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo conectar con %@ en %@. ¿Está en marcha?"
+          }
+        }
+      }
+    },
+    "Only http:// and https:// URLs are supported.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solo se admiten URLs http:// y https://."
+          }
+        }
+      }
+    },
+    "Ollama disconnected.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ollama desconectado."
+          }
+        }
+      }
+    },
+    "LM Studio": {
+      "shouldTranslate": false
+    },
+    "LM Studio disconnected.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "LM Studio desconectado."
+          }
+        }
+      }
+    },
+    "Save integrations": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar integraciones"
+          }
+        }
+      }
+    },
+    "API key  (re_…)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clave API  (re_…)"
+          }
+        }
+      }
+    },
+    "From address  (you@yourdomain.com)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dirección de remitente  (tu@tudominio.com)"
+          }
+        }
+      }
+    },
+    "Workflows": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Workflows"
+          }
+        }
+      }
+    },
+    "Instance URL  (https://…)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL de la instancia  (https://…)"
+          }
+        }
+      }
+    },
+    "API key": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clave API"
+          }
+        }
+      }
+    },
+    "❌ Save n8n URL and API key first.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "❌ Guarda primero la URL y la clave API de n8n."
+          }
+        }
+      }
+    },
+    "Projects": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proyectos"
+          }
+        }
+      }
+    },
+    "Token": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Token"
+          }
+        }
+      }
+    },
+    "❌ Save Vercel token first.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "❌ Guarda primero el token de Vercel."
+          }
+        }
+      }
+    },
+    "Personal Access Token": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Token de acceso personal"
+          }
+        }
+      }
+    },
+    "Secret key  (sk_live_… or sk_test_…)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clave secreta  (sk_live_… o sk_test_…)"
+          }
+        }
+      }
+    },
+    "API key  (cal_live_…)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clave API  (cal_live_…)"
+          }
+        }
+      }
+    },
+    "Integration token  (secret_…)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Token de integración  (secret_…)"
+          }
+        }
+      }
+    },
+    "✓ Integration keys saved.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Claves de integración guardadas."
+          }
+        }
+      }
+    },
+    "Signed in": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sesión iniciada"
+          }
+        }
+      }
+    },
+    "Waiting for sign-in…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esperando el inicio de sesión…"
+          }
+        }
+      }
+    },
+    "Sign in again": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar sesión de nuevo"
+          }
+        }
+      }
+    },
+    "Sign in": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Iniciar sesión"
+          }
+        }
+      }
+    },
+    "Check": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprobar"
+          }
+        }
+      }
+    },
+    "Remove from chat": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitar del chat"
+          }
+        }
+      }
+    },
+    "Complete the sign-in in the browser window…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Completa el inicio de sesión en la ventana del navegador…"
+          }
+        }
+      }
+    },
+    "%@ removed from the chat.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ quitado del chat."
+          }
+        }
+      }
+    },
+    "✓ %@ signed in. Pick it from the model selector in the chat.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Sesión iniciada en %@. Elígelo en el selector de modelo del chat."
+          }
+        }
+      }
+    },
+    "Not signed in to %@. Press Sign in.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No has iniciado sesión en %@. Pulsa Iniciar sesión."
+          }
+        }
+      }
+    },
+    "❌ No Vercel projects found.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "❌ No se encontraron proyectos de Vercel."
+          }
+        }
+      }
+    },
+    "❌ No n8n workflows found.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "❌ No se encontraron workflows de n8n."
+          }
+        }
+      }
+    },
+    "Not signed in": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin iniciar sesión"
+          }
+        }
+      }
+    },
+    "Watching %lld of %lld": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vigilando %lld de %lld"
+          }
+        }
+      }
+    },
+    "Load list": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cargar lista"
+          }
+        }
+      }
+    },
+    "Clear": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Limpiar"
+          }
+        }
+      }
+    },
+    "Press keys…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pulsa las teclas…"
+          }
+        }
+      }
+    },
+    "None": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ninguno"
+          }
+        }
+      }
+    },
+    "Use secret key (sk_live_… not pk_live_…)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usa la clave secreta (sk_live_…, no pk_live_…)"
+          }
+        }
+      }
+    },
+    "Ask a question about it": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hacer una pregunta sobre él"
+          }
+        }
+      }
+    },
+    "Add your MiniMax API key in Settings → Chat to use voice.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añade tu clave API de MiniMax en Ajustes → Chat para usar la voz."
+          }
+        }
+      }
+    },
+    "Coucou has no microphone access. Allow it in System Settings → Privacy & Security → Microphone.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coucou no tiene acceso al micrófono. Permítelo en Ajustes del Sistema → Privacidad y seguridad → Micrófono."
+          }
+        }
+      }
+    },
+    "Couldn't start the recording.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo iniciar la grabación."
+          }
+        }
+      }
+    },
+    "I didn't hear anything. Try again.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No he oído nada. Inténtalo de nuevo."
+          }
+        }
+      }
+    },
+    "MiniMax returned no audio.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "MiniMax no devolvió audio."
+          }
+        }
+      }
+    },
+    "Talk to Mochi": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hablar con Mochi"
+          }
+        }
+      }
+    },
+    "Voice (MiniMax)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Voz (MiniMax)"
+          }
+        }
+      }
+    },
+    "Talk to Mochi with the mic button in the chat. Speech is transcribed with MiniMax asr-1.0 and answers are read aloud with speech-2.8-hd, in Spanish. It uses your MiniMax API key.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Habla con Mochi con el botón del micrófono del chat. La voz se transcribe con MiniMax asr-1.0 y las respuestas se leen en voz alta con speech-2.8-hd, en español. Usa tu clave API de MiniMax."
+          }
+        }
+      }
+    },
+    "Answers to your voice questions are always read aloud. Change the voice ID to use another MiniMax voice.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las respuestas a tus preguntas por voz siempre se leen en voz alta. Cambia el ID de voz para usar otra voz de MiniMax."
+          }
+        }
+      }
+    },
+    "Read every answer aloud": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leer todas las respuestas en voz alta"
+          }
+        }
+      }
+    },
+    "Voice ID": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ID de voz"
+          }
+        }
+      }
+    },
+    "Coucou has no calendar access. Allow it in System Settings → Privacy & Security → Calendars.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coucou no tiene acceso al calendario. Permítelo en Ajustes del Sistema → Privacidad y seguridad → Calendarios."
+          }
+        }
+      }
+    },
+    "There is no calendar to save the event in.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay un calendario donde guardar el evento."
+          }
+        }
+      }
+    },
+    "There is no Reminders list to save in.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay una lista de Recordatorios donde guardar."
+          }
+        }
+      }
+    },
+    "Coucou has no Reminders access. Allow it in System Settings → Privacy & Security → Reminders.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coucou no tiene acceso a Recordatorios. Permítelo en Ajustes del Sistema → Privacidad y seguridad → Recordatorios."
+          }
+        }
+      }
+    },
+    "Reminder": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recordatorio"
+          }
+        }
+      }
+    },
+    "Coucou cannot send notifications. Allow them in System Settings → Notifications.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coucou no puede enviar notificaciones. Permítelas en Ajustes del Sistema → Notificaciones."
+          }
+        }
+      }
+    },
+    "Maileroo is not configured. Add the sending key and sender in Settings → Assistant.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maileroo no está configurado. Añade la clave de envío y el remitente en Ajustes → Asistente."
+          }
+        }
+      }
+    },
+    "The API URL must be https://.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La URL de la API debe ser https://."
+          }
+        }
+      }
+    },
+    "The WhatsApp API is not configured. Set it up in Settings → Assistant.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La API de WhatsApp no está configurada. Configúrala en Ajustes → Asistente."
+          }
+        }
+      }
+    },
+    "Confirm": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirmar"
+          }
+        }
+      }
+    },
+    "Create this event?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Crear este evento?"
+          }
+        }
+      }
+    },
+    "Create": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crear"
+          }
+        }
+      }
+    },
+    "Send this email?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Enviar este correo?"
+          }
+        }
+      }
+    },
+    "Send this WhatsApp message?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Enviar este mensaje de WhatsApp?"
+          }
+        }
+      }
+    },
+    "Assistant": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Asistente"
+          }
+        }
+      }
+    },
+    "Timers and Pomodoro": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temporizadores y Pomodoro"
+          }
+        }
+      }
+    },
+    "Calendar and Reminders": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendario y Recordatorios"
+          }
+        }
+      }
+    },
+    "Email (Maileroo)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correo (Maileroo)"
+          }
+        }
+      }
+    },
+    "WhatsApp (your API)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WhatsApp (tu API)"
+          }
+        }
+      }
+    },
+    "Mochi can read your calendar, set reminders and timers, and prepare emails and messages. Anything that sends a message or creates an event always waits for your click.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mochi puede leer tu calendario, poner recordatorios y temporizadores, y preparar correos y mensajes. Todo lo que envíe un mensaje o cree un evento siempre espera tu clic."
+          }
+        }
+      }
+    },
+    "Works with Anthropic, OpenAI, Google and MiniMax models.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Funciona con los modelos de Anthropic, OpenAI, Google y MiniMax."
+          }
+        }
+      }
+    },
+    "Let Mochi act for me": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dejar que Mochi actúe por mí"
+          }
+        }
+      }
+    },
+    "Try saying \"start a 25 minute Pomodoro\" or \"count down 10 minutes\" in the chat or with the mic. It ends with a jingle and a fun alert.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prueba a decir «inicia un Pomodoro de 25 minutos» o «cuenta regresiva de 10 minutos» en el chat o con el micrófono. Termina con una melodía y una alerta divertida."
+          }
+        }
+      }
+    },
+    "Count the last 5 seconds aloud": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contar en voz alta los últimos 5 segundos"
+          }
+        }
+      }
+    },
+    "Focus: %lld min": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enfoque: %lld min"
+          }
+        }
+      }
+    },
+    "Short break: %lld min": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descanso corto: %lld min"
+          }
+        }
+      }
+    },
+    "Long break: %lld min": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descanso largo: %lld min"
+          }
+        }
+      }
+    },
+    "Focus blocks: %lld": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bloques de enfoque: %lld"
+          }
+        }
+      }
+    },
+    "Test the countdown (8 s)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Probar la cuenta regresiva (8 s)"
+          }
+        }
+      }
+    },
+    "Test": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prueba"
+          }
+        }
+      }
+    },
+    "Uses the Calendar and Reminders apps of your Mac, so Google, iCloud and Outlook calendars work if they are added there.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usa las apps Calendario y Recordatorios de tu Mac, así que los calendarios de Google, iCloud y Outlook funcionan si están añadidos allí."
+          }
+        }
+      }
+    },
+    "Check calendar access": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprobar el acceso al calendario"
+          }
+        }
+      }
+    },
+    "❌ No calendar access.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "❌ Sin acceso al calendario."
+          }
+        }
+      }
+    },
+    "✓ Calendar access granted.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Acceso al calendario concedido."
+          }
+        }
+      }
+    },
+    "Mochi sends email through the Maileroo API. Create a sending key in your Maileroo dashboard (Domains → Sending Keys).": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mochi envía correos con la API de Maileroo. Crea una clave de envío en tu panel de Maileroo (Domains → Sending Keys)."
+          }
+        }
+      }
+    },
+    "Sending key": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clave de envío"
+          }
+        }
+      }
+    },
+    "Sender address (you@yourdomain.com)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dirección del remitente (tu@tudominio.com)"
+          }
+        }
+      }
+    },
+    "Sender name (optional)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre del remitente (opcional)"
+          }
+        }
+      }
+    },
+    "✓ Maileroo saved.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Maileroo guardado."
+          }
+        }
+      }
+    },
+    "Define the request Coucou sends. Use {{message}} where the assistant's text goes, and {{to}} for the phone number. The values are escaped so they cannot break your JSON.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Define la petición que envía Coucou. Usa {{message}} donde va el texto del asistente y {{to}} para el número de teléfono. Los valores se escapan para que no puedan romper tu JSON."
+          }
+        }
+      }
+    },
+    "Headers, one per line": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Headers, uno por línea"
+          }
+        }
+      }
+    },
+    "Body (JSON)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Body (JSON)"
+          }
+        }
+      }
+    },
+    "Example body: {\"to\": \"{{to}}\", \"type\": \"text\", \"text\": {\"body\": \"{{message}}\"}}. Headers are stored in the Keychain.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ejemplo de body: {\"to\": \"{{to}}\", \"type\": \"text\", \"text\": {\"body\": \"{{message}}\"}}. Los headers se guardan en el Llavero."
+          }
+        }
+      }
+    },
+    "Method": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Método"
+          }
+        }
+      }
+    },
+    "URL (https://…)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "URL (https://…)"
+          }
+        }
+      }
+    },
+    "Default recipient (optional)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Destinatario por defecto (opcional)"
+          }
+        }
+      }
+    },
+    "Remove": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitar"
+          }
+        }
+      }
+    },
+    "✓ WhatsApp API saved.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ API de WhatsApp guardada."
+          }
+        }
+      }
+    },
+    "WhatsApp API removed.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API de WhatsApp eliminada."
+          }
+        }
+      }
+    },
+    "Time's up!": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡Se acabó el tiempo!"
+          }
+        }
+      }
+    },
+    "Last pomodoro done! Take a long %lld minute break, you earned it.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡Último pomodoro terminado! Tómate un descanso largo de %lld minutos, te lo ganaste."
+          }
+        }
+      }
+    },
+    "Pomodoro %lld done! %lld minute break: stretch, water, dance.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡Pomodoro %lld terminado! Descanso de %lld minutos: estírate, toma agua, baila."
+          }
+        }
+      }
+    },
+    "Pomodoro done!": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡Pomodoro terminado!"
+          }
+        }
+      }
+    },
+    "Back to work!": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡A trabajar!"
+          }
+        }
+      }
+    },
+    "Break over. Pomodoro %lld: %lld minutes, let's go!": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descanso terminado. Pomodoro %lld: %lld minutos, ¡vamos!"
+          }
+        }
+      }
+    },
+    "Cycle complete!": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡Ciclo completo!"
+          }
+        }
+      }
+    },
+    "All pomodoros done. You are a machine!": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos los pomodoros terminados. ¡Eres una máquina!"
+          }
+        }
+      }
+    },
+    "Time's up! You nailed it, champ!": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡Se acabó el tiempo! ¡Lo lograste, campeón!"
+          }
+        }
+      }
+    },
+    "Ding ding ding! Time is over, superstar!": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡Ding ding ding! ¡Se acabó el tiempo, estrella!"
+          }
+        }
+      }
+    },
+    "Done! Mochi is doing a little dance for you.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡Listo! Mochi está bailando un poquito para ti."
+          }
+        }
+      }
+    },
+    "Boom! The clock has spoken. Great job!": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¡Boom! El reloj ha hablado. ¡Buen trabajo!"
+          }
+        }
+      }
+    },
+    "No timer running.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay ningún temporizador en marcha."
+          }
+        }
+      }
+    },
+    "Countdown": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cuenta regresiva"
+          }
+        }
+      }
+    },
+    "Focus · pomodoro %lld of %lld": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enfoque · pomodoro %lld de %lld"
+          }
+        }
+      }
+    },
+    "Short break": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descanso corto"
+          }
+        }
+      }
+    },
+    "Long break": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descanso largo"
+          }
+        }
+      }
+    },
+    "⏱ Timer started: %@.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⏱ Temporizador iniciado: %@."
+          }
+        }
+      }
+    },
+    "🍅 Pomodoro started: %lld min focus, %lld min break, %lld blocks.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "🍅 Pomodoro iniciado: %lld min de enfoque, %lld min de descanso, %lld bloques."
+          }
+        }
+      }
+    },
+    "⏹ Timer stopped.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⏹ Temporizador detenido."
+          }
+        }
+      }
+    },
+    "⏰ I'll remind you %@: %@": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "⏰ Te lo recordaré %@: %@"
+          }
+        }
+      }
+    },
+    "📅 Nothing scheduled %@.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "📅 No hay nada agendado %@."
+          }
+        }
+      }
+    },
+    "✅ No pending tasks.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✅ No hay tareas pendientes."
+          }
+        }
+      }
+    },
+    "Pending": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pendientes"
+          }
+        }
+      }
+    },
+    "all day": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "todo el día"
+          }
+        }
+      }
+    },
+    "Run %@?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Ejecutar %@?"
+          }
+        }
+      }
+    },
+    "Run": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ejecutar"
+          }
+        }
+      }
+    },
+    "Open assistant log": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir el log del asistente"
+          }
+        }
+      }
+    },
+    "Calendar checked": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Calendario consultado"
+          }
+        }
+      }
+    },
+    "Event": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Evento"
+          }
+        }
+      }
+    },
+    "Task added": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarea añadida"
+          }
+        }
+      }
+    },
+    "Tasks checked": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tareas consultadas"
+          }
+        }
+      }
+    },
+    "Timer": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temporizador"
+          }
+        }
+      }
+    },
+    "Pomodoro": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pomodoro"
+          }
+        }
+      }
+    },
+    "Timer stopped": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temporizador detenido"
+          }
+        }
+      }
+    },
+    "Email": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Correo"
+          }
+        }
+      }
+    },
+    "Today": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hoy"
+          }
+        }
+      }
+    },
+    "Nothing scheduled.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay nada agendado."
+          }
+        }
+      }
+    },
+    "No pending tasks.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay tareas pendientes."
+          }
+        }
+      }
+    },
+    "Agenda": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agenda"
+          }
+        }
+      }
+    },
+    "5 min": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 min"
+          }
+        }
+      }
+    },
+    "25 min": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "25 min"
+          }
+        }
+      }
+    },
+    "Stop timer": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detener"
+          }
+        }
+      }
+    },
+    "Custom actions": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acciones propias"
+          }
+        }
+      }
+    },
+    "Activity log": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Registro de actividad"
+          }
+        }
+      }
+    },
+    "Simple commands (timers, Pomodoro, reminders, agenda, tasks) work with any model. Emails, meetings and custom actions need Anthropic, OpenAI, Google or MiniMax.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los comandos simples (temporizadores, Pomodoro, recordatorios, agenda, tareas) funcionan con cualquier modelo. Los correos, reuniones y acciones propias necesitan Anthropic, OpenAI, Google o MiniMax."
+          }
+        }
+      }
+    },
+    "Try \"timer 10 minutes\", \"pomodoro\" or \"remind me to drink water in 20 minutes\" in the chat or with the mic. A timer ends with a jingle and a fun alert.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prueba «temporizador de 10 minutos», «inicia un pomodoro» o «recuérdame beber agua en 20 minutos» en el chat o con el micrófono. Un temporizador termina con una melodía y una alerta divertida."
+          }
+        }
+      }
+    },
+    "Check Reminders access": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprobar el acceso a Recordatorios"
+          }
+        }
+      }
+    },
+    "Open System Settings": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir Ajustes del Sistema"
+          }
+        }
+      }
+    },
+    "✓ Calendar access granted. %lld events in the next 7 days.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Acceso al calendario concedido. %lld eventos en los próximos 7 días."
+          }
+        }
+      }
+    },
+    "✓ Reminders access granted. %lld pending.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Acceso a Recordatorios concedido. %lld pendientes."
+          }
+        }
+      }
+    },
+    "Template (optional)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Plantilla (opcional)"
+          }
+        }
+      }
+    },
+    "With a template ID, Mochi fills these variables and Maileroo builds the email from your template. Without it, Mochi writes a plain text email.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Con un ID de plantilla, Mochi rellena estas variables y Maileroo construye el correo con tu plantilla. Sin ID, Mochi escribe un correo de texto simple."
+          }
+        }
+      }
+    },
+    "How should Mochi write and send emails?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cómo debe Mochi redactar y enviar los correos?"
+          }
+        }
+      }
+    },
+    "Example: Write in Spanish, formal tone, short. Sign as Gelber Moran, Parquesoft Pasto.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ejemplo: Escribe en español, tono formal y breve. Firma como Gelber Moran, Parquesoft Pasto."
+          }
+        }
+      }
+    },
+    "Template ID (empty = plain text emails)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ID de plantilla (vacío = correos de texto simple)"
+          }
+        }
+      }
+    },
+    "Template variables, e.g. name, message": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Variables de la plantilla, p. ej. name, message"
+          }
+        }
+      }
+    },
+    "Teach Mochi to call any HTTP API: WhatsApp, a webhook, n8n, Slack… Give the action a name, say when to use it, list its variables, and write the request. Use {{variable}} in the URL, headers and body: Mochi fills them. Values are escaped so they cannot break your JSON.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enseña a Mochi a llamar a cualquier API HTTP: WhatsApp, un webhook, n8n, Slack… Ponle un nombre a la acción, di cuándo usarla, lista sus variables y escribe la petición. Usa {{variable}} en la URL, los headers y el body: Mochi las rellena. Los valores se escapan para que no puedan romper tu JSON."
+          }
+        }
+      }
+    },
+    "New action": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nueva acción"
+          }
+        }
+      }
+    },
+    "incomplete": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "incompleta"
+          }
+        }
+      }
+    },
+    "Add action": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Añadir acción"
+          }
+        }
+      }
+    },
+    "Save actions": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guardar acciones"
+          }
+        }
+      }
+    },
+    "WhatsApp (Meta Cloud API)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WhatsApp (Meta Cloud API)"
+          }
+        }
+      }
+    },
+    "Blank action": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acción en blanco"
+          }
+        }
+      }
+    },
+    "✓ Actions saved.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Acciones guardadas."
+          }
+        }
+      }
+    },
+    "Everything Mochi does is written to agent.log: what it sent to the model, the actions it asked for and their results. API keys are never logged.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todo lo que hace Mochi se escribe en agent.log: lo que envió al modelo, las acciones que pidió y sus resultados. Las claves API nunca se registran."
+          }
+        }
+      }
+    },
+    "Nothing logged yet.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay nada registrado."
+          }
+        }
+      }
+    },
+    "Open in Finder": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mostrar en Finder"
+          }
+        }
+      }
+    },
+    "✓ Log copied.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "✓ Registro copiado."
+          }
+        }
+      }
+    },
+    "Default values, one per line: variable=value": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valores por defecto, uno por línea: variable=valor"
+          }
+        }
+      }
+    },
+    "Name (e.g. send_whatsapp)": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nombre (p. ej. send_whatsapp)"
+          }
+        }
+      }
+    },
+    "When should Mochi use it?": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "¿Cuándo debe usarla Mochi?"
+          }
+        }
+      }
+    },
+    "Variables, e.g. to, message": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Variables, p. ej. to, message"
+          }
+        }
+      }
+    },
+    "Ask me before running it": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preguntarme antes de ejecutarla"
+          }
+        }
+      }
+    },
+    "Remove action": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitar acción"
+          }
+        }
+      }
+    },
+    "•": {
+      "shouldTranslate": false
+    },
+    "New chat": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nuevo chat"
+          }
+        }
+      }
+    },
+    "Delete this chat": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar este chat"
+          }
+        }
+      }
+    },
+    "Clear this chat": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Limpiar este chat"
+          }
+        }
+      }
+    },
+    "Actions": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acciones"
+          }
+        }
+      }
+    },
+    "Right now": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ahora mismo"
+          }
+        }
+      }
+    },
+    "Ask Mochi to…": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pedirle a Mochi…"
+          }
+        }
+      }
+    },
+    "10 min": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "10 min"
+          }
+        }
+      }
+    },
+    "Remind me": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recuérdame"
+          }
+        }
+      }
+    },
+    "Remind me to … in 20 minutes": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recuérdame … en 20 minutos"
+          }
+        }
+      }
+    },
+    "Schedule a meeting with … tomorrow at 3 pm": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agenda una reunión con … mañana a las 3 pm"
+          }
+        }
+      }
+    },
+    "Send an email to … saying …": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envía un correo a … diciendo …"
+          }
+        }
+      }
+    },
+    "Use %@: ": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usa %@: "
+          }
+        }
+      }
+    },
+    "Chat history": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Historial de chats"
+          }
+        }
+      }
+    },
+    "Remember my chats on this Mac": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recordar mis chats en este Mac"
+          }
+        }
+      }
+    },
+    "Chats are kept in a private file on this Mac and never leave it, except the messages you send to the model you choose. Turn this off to forget them.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Los chats se guardan en un archivo privado de este Mac y nunca salen de él, salvo los mensajes que envías al modelo que elijas. Desactívalo para olvidarlos."
+          }
+        }
+      }
+    },
+    "Delete all chats": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eliminar todos los chats"
+          }
+        }
+      }
+    },
+    "All chats deleted.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todos los chats eliminados."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

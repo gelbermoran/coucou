@@ -23,16 +23,22 @@
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSAccessibilityUsageDescription</key>
-	<string>Pour lire le titre de la fenêtre active et l'attacher comme contexte.</string>
+	<string>To read the active window title and attach it as context.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>Pour sauter au terminal, envoyer des mails et piloter Musique.</string>
+	<string>To jump to the terminal, send emails and control Music.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>To read your calendar and schedule meetings when you ask.</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>To hear your voice questions and answer you out loud.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>To add tasks to your Reminders when you ask.</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
 </dict>

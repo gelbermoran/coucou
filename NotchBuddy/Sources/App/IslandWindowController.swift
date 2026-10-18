@@ -199,17 +199,49 @@ final class IslandWindowController: NSWindowController {
             self?.fsm.greetComplete()
         }
 
-        fsm.isHeldOpen = { AppState.shared.pendingApproval != nil }
+        fsm.isHeldOpen = { AppState.shared.pendingApproval != nil || AppState.shared.pendingAction != nil }
     }
 
     // MARK: - 60 Hz polling loop
 
     private func startPolling() {
+        guard frameTimer == nil else { return }
+        stopIdleWatch()
         frameTimer = Timer.scheduledTimer(withTimeInterval: 1.0/60.0, repeats: true) { [weak self] _ in
             guard let self else { return }
             Task { @MainActor in self.pollFrame() }
         }
         RunLoop.main.add(frameTimer!, forMode: .common)
+    }
+
+    // MARK: - Idle suspension (0 % CPU while the island is hidden)
+
+    private var idleMouseMonitor: Any?
+    private var idleModeSub: AnyCancellable?
+
+    /// Stops the 60 Hz loop while the island is hidden and nothing is going on. It restarts when the
+    /// mouse moves over the island window, or when the island mode changes (event, hotkey…).
+    private func suspendPollingIfIdle(inIsland: Bool) {
+        guard state.mode == .hidden, fsm.state == .hidden, !inIsland,
+              !inAttachDrag, attachDragStart == nil, !botHovering,
+              frameTimer != nil else { return }
+        frameTimer?.invalidate()
+        frameTimer = nil
+        idleMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: .mouseMoved) { [weak self] _ in
+            guard let self, let panel = self.window else { return }
+            if panel.frame.contains(NSEvent.mouseLocation) {
+                Task { @MainActor in self.startPolling() }
+            }
+        }
+        idleModeSub = state.$mode.dropFirst().sink { [weak self] _ in
+            DispatchQueue.main.async { self?.startPolling() }
+        }
+    }
+
+    private func stopIdleWatch() {
+        if let m = idleMouseMonitor { NSEvent.removeMonitor(m) }
+        idleMouseMonitor = nil
+        idleModeSub = nil
     }
 
     private func pollFrame() {
@@ -283,6 +315,8 @@ final class IslandWindowController: NSWindowController {
             updateDragGhost()
             updateWindowHighlight()
         }
+
+        suspendPollingIfIdle(inIsland: inIsland)
     }
 
     private var lastMouse: CGPoint = .zero
@@ -710,6 +744,7 @@ final class IslandWindowController: NSWindowController {
 
     func defaultView() -> IslandView {
         if state.pendingApproval != nil { return .approval }
+        if state.pendingAction != nil { return .confirm }
         return state.tasks.isEmpty ? .empty : .overview
     }
 

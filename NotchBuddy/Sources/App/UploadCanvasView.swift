@@ -165,7 +165,7 @@ struct UploadCanvasView: View {
             .foregroundColor(Color(hex:"#D5D7DB"))
         tCtx.draw(label, at: CGPoint(x: USC.TEXT_X, y: USC.TEXT_Y - 4), anchor: .leading)
 
-        let chips = ["PDF","Images","Code","Docs"]
+        let chips = [String(localized: "PDF"), String(localized: "Images"), String(localized: "Code"), String(localized: "Docs")]
         var cx = USC.TEXT_X
         for chip in chips {
             let chipText = Text(chip).font(.system(size:11, weight:.medium)).foregroundColor(Color(hex:"#B9BDC4"))

@@ -9,7 +9,10 @@ final class GithubPoller: @unchecked Sendable {
         guard timer == nil else { return }
         let t = DispatchSource.makeTimerSource(queue: .global(qos: .background))
         t.schedule(deadline: .now() + 7, repeating: 300)  // every 5 minutes
-        t.setEventHandler { [weak self] in self?.poll() }
+        t.setEventHandler { [weak self] in
+            guard IntegrationGate.isActive("integration_github") else { return }
+            self?.poll()
+        }
         t.resume()
         timer = t
     }

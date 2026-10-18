@@ -40,6 +40,7 @@ final class HookServer: @unchecked Sendable {
     private var connectionCount = 0
     private var pendingApprovalFD: Int32 = -1         // held open while user decides
     private var approvalFDSource: (any DispatchSourceRead)? = nil  // monitors pendingApprovalFD
+    private var pendingApprovalID: UUID? = nil        // identity of the card on screen (fds get reused)
     private var pendingQuestionFD: Int32 = -1         // held open while user answers AskUserQuestion
     private var questionFDSource: (any DispatchSourceRead)? = nil  // monitors pendingQuestionFD
     private var questionPillId: String = ""           // pill that owns the pending question
@@ -65,6 +66,7 @@ final class HookServer: @unchecked Sendable {
         // Never close the fd here directly — Apple requires it to happen in the cancel handler.
         cancelApprovalFDSource()
         pendingApprovalFD = -1
+        pendingApprovalID = nil
         let state = AppState.shared
         let pillId = state.pendingApproval?.pillId ?? "integration_claude"
         state.pendingApproval = nil
@@ -382,9 +384,9 @@ final class HookServer: @unchecked Sendable {
         if let pending = state.pendingApproval, agentId == pending.pillId {
             let handledNote: String
             switch pending.pillId {
-            case "agent_cursor": handledNote = "Handled in Cursor."
-            case "agent_codex":  handledNote = "Handled in Codex."
-            default:             handledNote = "Handled in VS Code."
+            case "agent_cursor": handledNote = String(localized: "Handled in Cursor.")
+            case "agent_codex":  handledNote = String(localized: "Handled in Codex.")
+            default:             handledNote = String(localized: "Handled in VS Code.")
             }
             var resolved = false
             switch name {
@@ -445,7 +447,7 @@ final class HookServer: @unchecked Sendable {
 
         case "PostToolUseFailure":
             state.updateTask(id: agentId, state: .working)
-            appendStep(id: agentId, step: "⚠ failed")
+            appendStep(id: agentId, step: String(localized: "⚠ failed"))
 
         case "Notification":
             let message = payload["message"] as? String ?? ""
@@ -498,10 +500,10 @@ final class HookServer: @unchecked Sendable {
             state.removeTask(id: agentId)
 
         case "SubagentStart":
-            appendStep(id: agentId, step: "+ subagent")
+            appendStep(id: agentId, step: String(localized: "+ subagent"))
 
         case "SubagentStop":
-            appendStep(id: agentId, step: "• subagent done")
+            appendStep(id: agentId, step: String(localized: "• subagent done"))
 
         default:
             break
@@ -648,7 +650,7 @@ final class HookServer: @unchecked Sendable {
             return
         }
 
-        let command = toolInput["command"] as? String ?? tool
+        let command = Self.approvalSummary(tool: tool, input: toolInput)
 
         if pendingApprovalFD >= 0 {
             // Displace the previous request: write "ask" then cancel its source.
@@ -663,11 +665,13 @@ final class HookServer: @unchecked Sendable {
             }
         }
         pendingApprovalFD = fd
+        let requestID = UUID()
+        pendingApprovalID = requestID
         activeSessionId = sessionId
 
         upsertWorkspaceTask(id: pillId, projectName: projectName, cwd: cwd)
         state.updateTask(id: pillId, state: .approval)
-        state.pendingApproval = ApprovalInfo(sessionId: sessionId, tool: tool,
+        state.pendingApproval = ApprovalInfo(requestID: requestID, sessionId: sessionId, tool: tool,
                                               command: command, inputKey: inputKey, pillId: pillId)
         state.isPinned = true
         SoundEngine.shared.play("approval")
@@ -683,12 +687,12 @@ final class HookServer: @unchecked Sendable {
         let capturedPillId = pillId
         let source = DispatchSource.makeReadSource(fileDescriptor: fd, queue: .main)
         source.setEventHandler { [weak self] in
-            guard let self, self.pendingApprovalFD == fd else { return }
+            guard let self, self.pendingApprovalID == requestID else { return }
             let note: String
             switch capturedPillId {
-            case "agent_cursor": note = "Handled in Cursor."
-            case "agent_codex":  note = "Handled in Codex."
-            default:             note = "Handled in VS Code."
+            case "agent_cursor": note = String(localized: "Handled in Cursor.")
+            case "agent_codex":  note = String(localized: "Handled in Codex.")
+            default:             note = String(localized: "Handled in VS Code.")
             }
             self.dismissApprovalCard(note: note)
         }
@@ -698,24 +702,41 @@ final class HookServer: @unchecked Sendable {
 
         // 115s safety timeout — show a note and cancel without sending a decision.
         // nb-hook reads EOF from the cancel handler's close and exits; Claude Code / Codex re-asks.
-        let captured = fd
         DispatchQueue.main.asyncAfter(deadline: .now() + 115) { [weak self] in
-            guard let self, self.pendingApprovalFD == captured else { return }
+            guard let self, self.pendingApprovalID == requestID else { return }
             let note: String
             switch capturedPillId {
-            case "agent_cursor": note = "Still waiting in Cursor."
-            case "agent_codex":  note = "Still waiting in Codex."
-            default:             note = "Still waiting in VS Code."
+            case "agent_cursor": note = String(localized: "Still waiting in Cursor.")
+            case "agent_codex":  note = String(localized: "Still waiting in Codex.")
+            default:             note = String(localized: "Still waiting in VS Code.")
             }
             self.dismissApprovalCard(note: note)
         }
     }
 
+    /// What the approval card shows: the command, or the target of a file tool, so the user
+    /// can see what they are authorizing (tool name alone hid the path for Write/Edit).
+    nonisolated static func approvalSummary(tool: String, input: [String: Any]) -> String {
+        if let cmd = input["command"] as? String { return cmd }
+        let target = (input["file_path"] as? String) ?? (input["path"] as? String)
+            ?? (input["notebook_path"] as? String) ?? (input["url"] as? String)
+        guard let target else { return tool }
+        var out = "\(tool) \(target)"
+        if let body = (input["content"] as? String) ?? (input["new_string"] as? String) {
+            out += "\n" + String(body.prefix(400)) + (body.count > 400 ? "…" : "")
+        }
+        return out
+    }
+
     /// Called by ApprovalView buttons. Writes the decision to the waiting nb-hook and cleans up.
     @MainActor
-    func sendApprovalDecision(_ decision: String) {
+    func sendApprovalDecision(_ decision: String, for requestID: UUID) {
+        // The card the user clicked is no longer the pending one (displaced, timed out,
+        // handled in the editor): never apply the click to a request they have not seen.
+        guard pendingApprovalID == requestID else { return }
         let fd = pendingApprovalFD
         pendingApprovalFD = -1
+        pendingApprovalID = nil
         // Capture source before nulling — we send the decision first, then cancel the source.
         // The cancel handler closes the fd; never close it directly.
         let source = approvalFDSource
@@ -906,27 +927,27 @@ final class HookServer: @unchecked Sendable {
         return aliases[name.lowercased()] ?? name
     }
 
-    // MARK: - French step labels
+    // MARK: - Step labels
 
     private func frenchStep(tool: String, input: [String: Any]) -> String {
         let labels: [String: String] = [
-            "Bash":        "Exécute",
-            "Read":        "Lit",
-            "Write":       "Écrit",
-            "Edit":        "Modifie",
-            "Glob":        "Cherche",
-            "Grep":        "Recherche",
-            "WebSearch":   "Recherche web",
-            "WebFetch":    "Récupère",
-            "TodoWrite":   "Tâches",
-            "Task":        "Agent",
-            "LS":          "Liste",
-            "MultiEdit":   "Modifie",
-            "NotebookEdit": "Notebook",
+            "Bash":        String(localized: "Runs"),
+            "Read":        String(localized: "Reads"),
+            "Write":       String(localized: "Writes"),
+            "Edit":        String(localized: "Edits"),
+            "Glob":        String(localized: "Searches"),
+            "Grep":        String(localized: "Searches"),
+            "WebSearch":   String(localized: "Web search"),
+            "WebFetch":    String(localized: "Fetches"),
+            "TodoWrite":   String(localized: "Tasks"),
+            "Task":        String(localized: "Agent"),
+            "LS":          String(localized: "Lists"),
+            "MultiEdit":   String(localized: "Edits"),
+            "NotebookEdit": String(localized: "Notebook"),
             // Codex tools
-            "apply_patch": "Modifie",
-            "update_plan": "Tâches",
-            "spawn_agent": "Agent",
+            "apply_patch": String(localized: "Edits"),
+            "update_plan": String(localized: "Tasks"),
+            "spawn_agent": String(localized: "Agent"),
         ]
         var label = labels[tool] ?? tool
 
@@ -967,19 +988,19 @@ final class HookServer: @unchecked Sendable {
         return label
     }
 
-    /// Infers a French verb from a shell command's first word.
+    /// Infers a verb from a shell command's first word.
     private func bashVerb(_ command: String) -> String {
         let first = command.split(whereSeparator: { $0.isWhitespace }).first.map(String.init) ?? ""
         switch first {
-        case "cat", "bat", "head", "tail", "less", "more", "nl": return "Lit"
-        case "rg", "grep", "find", "fd", "ls", "tree", "wc":    return "Cherche"
+        case "cat", "bat", "head", "tail", "less", "more", "nl": return String(localized: "Reads")
+        case "rg", "grep", "find", "fd", "ls", "tree", "wc":    return String(localized: "Searches")
         default: break
         }
         let testRunners = ["pytest", "vitest", "jest", "npm test", "npm run test",
                            "cargo test", "go test", "swift test", "make test",
                            "xcodebuild test", "unittest"]
-        if testRunners.contains(where: { command.contains($0) }) { return "Teste" }
-        return "Exécute"
+        if testRunners.contains(where: { command.contains($0) }) { return String(localized: "Tests") }
+        return String(localized: "Runs")
     }
 
     /// Collapses whitespace so a multi-line command stays one ticker row.
@@ -1049,7 +1070,7 @@ final class HookServer: @unchecked Sendable {
                 if let hookList = matcher["hooks"] as? [[String: Any]] {
                     for hook in hookList {
                         if let cmd = hook["command"] as? String,
-                           cmd.contains("NotchBuddy") || cmd.contains("coucou") {
+                           cmd.contains("nb-hook") {
                             hasCoucouHooks = true
                             if let timeout = hook["timeout"] as? Int, timeout < 120 { return true }
                         }
@@ -1065,7 +1086,7 @@ final class HookServer: @unchecked Sendable {
                 (m["matcher"] as? String) == "AskUserQuestion"
                 && (m["hooks"] as? [[String: Any]])?.contains {
                     let cmd = $0["command"] as? String ?? ""
-                    return cmd.contains("NotchBuddy") || cmd.contains("coucou")
+                    return cmd.contains("nb-hook")
                 } ?? false
             }
             if !hasAskEntry { return true }
@@ -1076,39 +1097,45 @@ final class HookServer: @unchecked Sendable {
     // MARK: - Claude Code settings.json hook installer
 
     private var _pendingHooksData: Data?
+    private var _pendingHooksFingerprint: String?
+
+    private static var claudeSettingsURL: URL {
+        FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".claude/settings.json")
+    }
 
     /// Returns preview JSON without writing — call writeClaudeHooks() to confirm.
     func previewClaudeHooks() throws -> String {
+        let url = Self.claudeSettingsURL
+        let current = FileManager.default.fileExists(atPath: url.path) ? try Data(contentsOf: url) : Data()
+        _pendingHooksFingerprint = sha256Hex(current)
         let data = try buildHooksData()
         _pendingHooksData = data
         return String(data: data, encoding: .utf8) ?? ""
     }
 
     /// Writes the hooks to disk (call after user confirms preview).
+    /// Fails if the file changed since the preview or if the backup cannot be made.
     func writeClaudeHooks() throws {
-        guard let data = _pendingHooksData else { return }
-        let settingsURL = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent(".claude/settings.json")
-        // Backup first
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd-HHmm"
-        let stamp = formatter.string(from: Date())
-        let backupURL = settingsURL.deletingLastPathComponent()
-            .appendingPathComponent("settings.json.bak-\(stamp)")
-        try? FileManager.default.copyItem(at: settingsURL, to: backupURL)
-        try? FileManager.default.createDirectory(at: settingsURL.deletingLastPathComponent(),
-                                                  withIntermediateDirectories: true)
-        try data.write(to: settingsURL, options: .atomic)
+        guard let data = _pendingHooksData, let fp = _pendingHooksFingerprint else { return }
+        let url = Self.claudeSettingsURL
+        let current = (try? Data(contentsOf: url)) ?? Data()
+        guard sha256Hex(current) == fp else {
+            throw NSError(domain: "Coucou", code: 1, userInfo: [
+                NSLocalizedDescriptionKey: String(localized: "~/.claude/settings.json changed since preview. Refresh and try again.")
+            ])
+        }
+        try writeJSONFile(data, to: url, suffix: "settings.json")
         _pendingHooksData = nil
+        _pendingHooksFingerprint = nil
     }
 
     private func buildHooksData() throws -> Data {
-        let settingsURL = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent(".claude/settings.json")
-        var settings: [String: Any] = [:]
-        if let data = try? Data(contentsOf: settingsURL),
-           let parsed = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
-            settings = parsed
+        var settings = try Self.strictReadJSONObject(at: Self.claudeSettingsURL,
+                                                     label: "~/.claude/settings.json")
+        if let raw = settings["hooks"], !(raw is [String: Any]) {
+            throw NSError(domain: "Coucou", code: 2, userInfo: [
+                NSLocalizedDescriptionKey: String(localized: "~/.claude/settings.json: \"hooks\" has an unexpected type — Coucou has not touched it.")
+            ])
         }
         let hookPath = Self.hookScriptPath
         #if APPSTORE
@@ -1128,8 +1155,8 @@ final class HookServer: @unchecked Sendable {
         ]
         var hooks = settings["hooks"] as? [String: Any] ?? [:]
         for (event, timeout) in events {
-            var existing = hooks[event] as? [[String: Any]] ?? []
-            existing.removeAll { ($0["hooks"] as? [[String: Any]])?.contains { ($0["command"] as? String)?.contains("NotchBuddy") == true || ($0["command"] as? String)?.contains("coucou") == true } ?? false }
+            // Only our own nb-hook entries are replaced; the user's other hooks stay untouched.
+            var existing = removeNbHookEntries(from: hooks[event] as? [[String: Any]] ?? [])
             existing.append(["hooks": [["type": "command", "command": quotedCmd, "timeout": timeout]]])
             hooks[event] = existing
         }
@@ -1141,31 +1168,89 @@ final class HookServer: @unchecked Sendable {
         ])
         hooks["PreToolUse"] = preToolUse
         settings["hooks"] = hooks
-        return try JSONSerialization.data(withJSONObject: settings, options: [.prettyPrinted, .sortedKeys])
+        return try JSONSerialization.data(withJSONObject: settings,
+                                          options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
     }
 
     func uninstallClaudeHooks() throws {
-        let settingsURL = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent(".claude/settings.json")
-        guard let data = try? Data(contentsOf: settingsURL),
-              var settings = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              var hooks = settings["hooks"] as? [String: Any] else { return }
-
+        let url = Self.claudeSettingsURL
+        guard FileManager.default.fileExists(atPath: url.path) else { return }
+        var settings = try Self.strictReadJSONObject(at: url, label: "~/.claude/settings.json")
+        guard var hooks = settings["hooks"] as? [String: Any] else { return }
         for key in hooks.keys {
-            if var matchers = hooks[key] as? [[String: Any]] {
-                matchers.removeAll { matcher in
-                    (matcher["hooks"] as? [[String: Any]])?.contains {
-                        ($0["command"] as? String)?.contains("NotchBuddy") == true ||
-                        ($0["command"] as? String)?.contains("coucou") == true
-                    } ?? false
-                }
-                if matchers.isEmpty { hooks.removeValue(forKey: key) }
-                else { hooks[key] = matchers }
+            if let matchers = hooks[key] as? [[String: Any]] {
+                let cleaned = removeNbHookEntries(from: matchers)
+                if cleaned.isEmpty { hooks.removeValue(forKey: key) } else { hooks[key] = cleaned }
             }
         }
-        settings["hooks"] = hooks
-        let newData = try JSONSerialization.data(withJSONObject: settings, options: [.prettyPrinted, .sortedKeys])
-        try newData.write(to: settingsURL, options: .atomic)
+        if hooks.isEmpty { settings.removeValue(forKey: "hooks") } else { settings["hooks"] = hooks }
+        let newData = try JSONSerialization.data(withJSONObject: settings,
+                                                 options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
+        try writeJSONFile(newData, to: url, suffix: "settings.json")
+    }
+
+    // MARK: - Shared JSON config helpers (both builds)
+
+    /// Reads a JSON object from url.
+    /// Absent file → empty dict. Present but invalid → throws with a user-facing message.
+    private static func strictReadJSONObject(at url: URL, label: String) throws -> [String: Any] {
+        guard FileManager.default.fileExists(atPath: url.path) else { return [:] }
+        let data: Data
+        do { data = try Data(contentsOf: url) }
+        catch {
+            throw NSError(domain: "Coucou", code: 2, userInfo: [
+                NSLocalizedDescriptionKey: String(localized: "\(label) cannot be read — Coucou has not touched it.")
+            ])
+        }
+        guard let obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
+            throw NSError(domain: "Coucou", code: 2, userInfo: [
+                NSLocalizedDescriptionKey: String(localized: "\(label) is not valid JSON — Coucou has not touched it.")
+            ])
+        }
+        return obj
+    }
+
+    /// Backs up the existing file (throws on failure), creates parent dirs, then atomically writes.
+    private func writeJSONFile(_ data: Data, to url: URL, suffix: String) throws {
+        let fm = FileManager.default
+        if fm.fileExists(atPath: url.path) {
+            let fmt = DateFormatter()
+            fmt.locale = Locale(identifier: "en_US_POSIX")
+            fmt.dateFormat = "yyyyMMdd-HHmmss"
+            let backupURL = url.deletingLastPathComponent()
+                .appendingPathComponent("\(suffix).bak-\(fmt.string(from: Date()))")
+            do { try fm.copyItem(at: url, to: backupURL) }
+            catch {
+                throw NSError(domain: "Coucou", code: 3, userInfo: [
+                    NSLocalizedDescriptionKey: String(localized: "Could not back up \(url.lastPathComponent): \(error.localizedDescription)")
+                ])
+            }
+        }
+        try fm.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try data.write(to: url, options: .atomic)
+    }
+
+    /// Removes entries containing "nb-hook" from a Gemini-format groups array.
+    /// Handles both new group format (matcher + hooks[]) and legacy flat format (command at top level).
+    /// Returns the cleaned array; empty groups (after inner-hook removal) are dropped.
+    private func removeNbHookEntries(from groups: [[String: Any]]) -> [[String: Any]] {
+        groups.compactMap { group -> [String: Any]? in
+            // Legacy flat entry — command at group level
+            if let cmd = group["command"] as? String, cmd.contains("nb-hook") { return nil }
+            // Group format — filter inner hooks
+            if var innerHooks = group["hooks"] as? [[String: Any]] {
+                innerHooks.removeAll { ($0["command"] as? String)?.contains("nb-hook") == true }
+                if innerHooks.isEmpty { return nil }
+                var updated = group
+                updated["hooks"] = innerHooks
+                return updated
+            }
+            return group
+        }
+    }
+
+    private func sha256Hex(_ data: Data) -> String {
+        SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
     }
 
     // MARK: - Claude plan status line installer
@@ -1221,7 +1306,7 @@ final class HookServer: @unchecked Sendable {
             if clCheck.terminationStatus != 0 {
                 throw NSError(domain: "Coucou", code: 1,
                               userInfo: [NSLocalizedDescriptionKey:
-                                  "Command Line Tools are required but not installed. Run: xcode-select --install"])
+                                  String(localized: "Command Line Tools are required but not installed. Run: xcode-select --install")])
             }
 
             if let existing = oldSL,
@@ -1448,7 +1533,7 @@ final class HookServer: @unchecked Sendable {
         let exists = FileManager.default.fileExists(atPath: url.path)
         if !install && !exists {
             throw NSError(domain: "CoucouNoop", code: 0, userInfo: [
-                NSLocalizedDescriptionKey: "No Gemini CLI hooks to remove."
+                NSLocalizedDescriptionKey: String(localized: "No Gemini CLI hooks to remove.")
             ])
         }
         let current = exists ? try Data(contentsOf: url) : Data()
@@ -1464,7 +1549,7 @@ final class HookServer: @unchecked Sendable {
         let current = (try? Data(contentsOf: url)) ?? Data()
         guard sha256Hex(current) == fp else {
             throw NSError(domain: "Coucou", code: 1, userInfo: [
-                NSLocalizedDescriptionKey: "~/.gemini/settings.json changed since preview. Refresh and try again."
+                NSLocalizedDescriptionKey: String(localized: "~/.gemini/settings.json changed since preview. Refresh and try again.")
             ])
         }
         try writeJSONFile(data, to: url, suffix: "settings.json")
@@ -1477,7 +1562,7 @@ final class HookServer: @unchecked Sendable {
                                                      label: "~/.gemini/settings.json")
         if let raw = settings["hooks"], !(raw is [String: Any]) {
             throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "~/.gemini/settings.json: \"hooks\" has an unexpected type — Coucou has not touched it."
+                NSLocalizedDescriptionKey: String(localized: "~/.gemini/settings.json: \"hooks\" has an unexpected type — Coucou has not touched it.")
             ])
         }
         let base = hookBase()
@@ -1494,7 +1579,7 @@ final class HookServer: @unchecked Sendable {
         for (geminiEvent, normalizedEvent, timeout) in events {
             if let raw = hooks[geminiEvent], !(raw is [[String: Any]]) {
                 throw NSError(domain: "Coucou", code: 2, userInfo: [
-                    NSLocalizedDescriptionKey: "~/.gemini/settings.json: \"hooks\"[\"\(geminiEvent)\"] has an unexpected type — Coucou has not touched it."
+                    NSLocalizedDescriptionKey: String(localized: "~/.gemini/settings.json: \"hooks\"[\"\(geminiEvent)\"] has an unexpected type — Coucou has not touched it.")
                 ])
             }
             var groups = hooks[geminiEvent] as? [[String: Any]] ?? []
@@ -1518,7 +1603,7 @@ final class HookServer: @unchecked Sendable {
                                                      label: "~/.gemini/settings.json")
         if let raw = settings["hooks"], !(raw is [String: Any]) {
             throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "~/.gemini/settings.json: \"hooks\" has an unexpected type — Coucou has not touched it."
+                NSLocalizedDescriptionKey: String(localized: "~/.gemini/settings.json: \"hooks\" has an unexpected type — Coucou has not touched it.")
             ])
         }
         if var hooks = settings["hooks"] as? [String: Any] {
@@ -1544,7 +1629,7 @@ final class HookServer: @unchecked Sendable {
         let exists = FileManager.default.fileExists(atPath: url.path)
         if !install && !exists {
             throw NSError(domain: "CoucouNoop", code: 0, userInfo: [
-                NSLocalizedDescriptionKey: "No Antigravity hooks to remove."
+                NSLocalizedDescriptionKey: String(localized: "No Antigravity hooks to remove.")
             ])
         }
         let current = exists ? try Data(contentsOf: url) : Data()
@@ -1560,7 +1645,7 @@ final class HookServer: @unchecked Sendable {
         let current = (try? Data(contentsOf: url)) ?? Data()
         guard sha256Hex(current) == fp else {
             throw NSError(domain: "Coucou", code: 1, userInfo: [
-                NSLocalizedDescriptionKey: "~/.gemini/config/hooks.json changed since preview. Refresh and try again."
+                NSLocalizedDescriptionKey: String(localized: "~/.gemini/config/hooks.json changed since preview. Refresh and try again.")
             ])
         }
         try writeJSONFile(data, to: url, suffix: "hooks.json")
@@ -1608,64 +1693,6 @@ final class HookServer: @unchecked Sendable {
         return "/bin/sh \"\(path)\""
     }
 
-    /// Reads a JSON object from url.
-    /// Absent file → empty dict. Present but invalid → throws with a user-facing message.
-    private static func strictReadJSONObject(at url: URL, label: String) throws -> [String: Any] {
-        guard FileManager.default.fileExists(atPath: url.path) else { return [:] }
-        let data: Data
-        do { data = try Data(contentsOf: url) }
-        catch {
-            throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "\(label) cannot be read — Coucou has not touched it."
-            ])
-        }
-        guard let obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
-            throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "\(label) is not valid JSON — Coucou has not touched it."
-            ])
-        }
-        return obj
-    }
-
-    /// Backs up the existing file (throws on failure), creates parent dirs, then atomically writes.
-    private func writeJSONFile(_ data: Data, to url: URL, suffix: String) throws {
-        let fm = FileManager.default
-        if fm.fileExists(atPath: url.path) {
-            let fmt = DateFormatter()
-            fmt.locale = Locale(identifier: "en_US_POSIX")
-            fmt.dateFormat = "yyyyMMdd-HHmmss"
-            let backupURL = url.deletingLastPathComponent()
-                .appendingPathComponent("\(suffix).bak-\(fmt.string(from: Date()))")
-            do { try fm.copyItem(at: url, to: backupURL) }
-            catch {
-                throw NSError(domain: "Coucou", code: 3, userInfo: [
-                    NSLocalizedDescriptionKey: "Could not back up \(url.lastPathComponent): \(error.localizedDescription)"
-                ])
-            }
-        }
-        try fm.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try data.write(to: url, options: .atomic)
-    }
-
-    /// Removes entries containing "nb-hook" from a Gemini-format groups array.
-    /// Handles both new group format (matcher + hooks[]) and legacy flat format (command at top level).
-    /// Returns the cleaned array; empty groups (after inner-hook removal) are dropped.
-    private func removeNbHookEntries(from groups: [[String: Any]]) -> [[String: Any]] {
-        groups.compactMap { group -> [String: Any]? in
-            // Legacy flat entry — command at group level
-            if let cmd = group["command"] as? String, cmd.contains("nb-hook") { return nil }
-            // Group format — filter inner hooks
-            if var innerHooks = group["hooks"] as? [[String: Any]] {
-                innerHooks.removeAll { ($0["command"] as? String)?.contains("nb-hook") == true }
-                if innerHooks.isEmpty { return nil }
-                var updated = group
-                updated["hooks"] = innerHooks
-                return updated
-            }
-            return group
-        }
-    }
-
     // MARK: - Codex hook installer  (#if !APPSTORE only)
 
     static var codexHooksURL: URL {
@@ -1699,7 +1726,7 @@ final class HookServer: @unchecked Sendable {
         let exists = FileManager.default.fileExists(atPath: url.path)
         if !install && !exists {
             throw NSError(domain: "CoucouNoop", code: 0, userInfo: [
-                NSLocalizedDescriptionKey: "No Codex hooks to remove."
+                NSLocalizedDescriptionKey: String(localized: "No Codex hooks to remove.")
             ])
         }
         let current = exists ? try Data(contentsOf: url) : Data()
@@ -1715,7 +1742,7 @@ final class HookServer: @unchecked Sendable {
         let current = (try? Data(contentsOf: url)) ?? Data()
         guard sha256Hex(current) == fp else {
             throw NSError(domain: "Coucou", code: 1, userInfo: [
-                NSLocalizedDescriptionKey: "~/.codex/hooks.json changed since preview. Refresh and try again."
+                NSLocalizedDescriptionKey: String(localized: "~/.codex/hooks.json changed since preview. Refresh and try again.")
             ])
         }
         try writeJSONFile(data, to: url, suffix: "hooks.json")
@@ -1727,7 +1754,7 @@ final class HookServer: @unchecked Sendable {
         var root = try Self.strictReadJSONObject(at: Self.codexHooksURL, label: "~/.codex/hooks.json")
         if let raw = root["hooks"], !(raw is [String: Any]) {
             throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "~/.codex/hooks.json: \"hooks\" has an unexpected type — Coucou has not touched it."
+                NSLocalizedDescriptionKey: String(localized: "~/.codex/hooks.json: \"hooks\" has an unexpected type — Coucou has not touched it.")
             ])
         }
         let base = hookBase()
@@ -1749,7 +1776,7 @@ final class HookServer: @unchecked Sendable {
         for (event, timeout, statusMsg) in events {
             if let raw = hooks[event], !(raw is [[String: Any]]) {
                 throw NSError(domain: "Coucou", code: 2, userInfo: [
-                    NSLocalizedDescriptionKey: "~/.codex/hooks.json: \"hooks\"[\"\(event)\"] has an unexpected type — Coucou has not touched it."
+                    NSLocalizedDescriptionKey: String(localized: "~/.codex/hooks.json: \"hooks\"[\"\(event)\"] has an unexpected type — Coucou has not touched it.")
                 ])
             }
             var groups = hooks[event] as? [[String: Any]] ?? []
@@ -1773,7 +1800,7 @@ final class HookServer: @unchecked Sendable {
         var root = try Self.strictReadJSONObject(at: Self.codexHooksURL, label: "~/.codex/hooks.json")
         if let raw = root["hooks"], !(raw is [String: Any]) {
             throw NSError(domain: "Coucou", code: 2, userInfo: [
-                NSLocalizedDescriptionKey: "~/.codex/hooks.json: \"hooks\" has an unexpected type — Coucou has not touched it."
+                NSLocalizedDescriptionKey: String(localized: "~/.codex/hooks.json: \"hooks\" has an unexpected type — Coucou has not touched it.")
             ])
         }
         if var hooks = root["hooks"] as? [String: Any] {
@@ -1789,11 +1816,6 @@ final class HookServer: @unchecked Sendable {
                                          options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes])
     }
 
-    // MARK: SHA-256 fingerprint
-
-    private func sha256Hex(_ data: Data) -> String {
-        SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
-    }
     #endif
 }
 
@@ -1812,6 +1834,8 @@ extension Notification.Name {
 private let nbHookShellWrapper = """
 #!/bin/sh
 # Coucou hook relay — always exits 0, never blocks Claude Code
+# Coucou's own subscription chat (claude -p / codex exec) must not show up as a coding session
+[ -n "$COUCOU_CHAT" ] && exit 0
 HOOK_DIR="$(dirname "$0")"
 if xcode-select -p >/dev/null 2>&1; then
     out=$(/usr/bin/python3 "$HOOK_DIR/nb-hook.py" "$@" 2>/dev/null)

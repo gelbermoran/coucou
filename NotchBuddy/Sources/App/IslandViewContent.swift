@@ -23,6 +23,9 @@ struct IslandViewContent: View {
         case .searching: SearchingView(state: state)
         case .result:    ResultView(state: state)
         case .note:      NoteView(state: state)
+        case .confirm:   ActionConfirmView(state: state)
+        case .timer:     TimerCardView()
+        case .agenda:    AgendaCardView(state: state)
         case .settings:  SettingsIslandView(state: state)
         case .greeting:  EmptyView()  // GreetingCanvasView overlaid in IslandRootView
         }
@@ -62,7 +65,7 @@ struct OverviewView: View {
                                 Text({ () -> String in
                                     switch agent.source {
                                     case .claudeCode: return "Claude Code"
-                                    case .agent:      return "Agent"
+                                    case .agent:      return String(localized: "Agent")
                                     case .n8n:        return "n8n"
                                     }
                                 }())
@@ -206,6 +209,12 @@ struct OverviewView: View {
             switchChatProvider(.ollama)
         case "ai_lmstudio":
             switchChatProvider(.lmstudio)
+        case "ai_minimax":
+            switchChatProvider(.minimax)
+        case "ai_claude_cli":
+            switchChatProvider(.claudeCLI)
+        case "ai_codex_cli":
+            switchChatProvider(.codexCLI)
         case "integration_music":
             #if !APPSTORE
             MusicController.shared.openMusic()
@@ -248,7 +257,7 @@ struct EmptyStateView: View {
                         .foregroundColor(Color(hex: "#9398A1"))
                 }
                 Spacer()
-                PrimaryButton("Ask Claude") {
+                PrimaryButton(String(localized: "Ask Claude")) {
                     state.view = .prompt
                 }
             }
@@ -272,16 +281,16 @@ struct ApprovalView: View {
                 AgentWho(task: state.focusTask, label: "needs permission")
                 CodeBlock(text: approval?.command ?? approval?.tool ?? "…")
                 HStack(spacing: 8) {
-                    SecondaryButton("Deny") {
-                        HookServer.shared.sendApprovalDecision("deny")
+                    SecondaryButton(String(localized: "Deny")) {
+                        if let id = approval?.requestID { HookServer.shared.sendApprovalDecision("deny", for: id) }
                     }
-                    PrimaryButton("Allow") {
-                        HookServer.shared.sendApprovalDecision("allow")
+                    PrimaryButton(String(localized: "Allow")) {
+                        if let id = approval?.requestID { HookServer.shared.sendApprovalDecision("allow", for: id) }
                     }
                     // Codex rejects updatedPermissions, so "Always" is not offered
                     if approval?.pillId != "agent_codex" {
-                        SecondaryButton("Always") {
-                            HookServer.shared.sendApprovalDecision("always")
+                        SecondaryButton(String(localized: "Always")) {
+                            if let id = approval?.requestID { HookServer.shared.sendApprovalDecision("always", for: id) }
                         }
                     }
                 }
@@ -365,7 +374,7 @@ struct QuestionView: View {
                             .padding(.horizontal, 8).padding(.vertical, 5)
                             .background(Color.white.opacity(0.07))
                             .clipShape(RoundedRectangle(cornerRadius: 8))
-                            Button(isLast ? "Send" : "Next") {
+                            Button(isLast ? String(localized: "Send") : String(localized: "Next")) {
                                 commitOtherAndProceed(q: q, qi: qi, isLast: isLast)
                             }
                             .buttonStyle(.plain)
@@ -407,14 +416,14 @@ struct QuestionView: View {
                                 }
                             }
                             // "Other…" implicit free-text option
-                            SecondaryButton("Other…") {
+                            SecondaryButton(String(localized: "Other…")) {
                                 if qi < showOther.count { showOther[qi] = true }
                             }
                         }
                     }
                     // Send/Next — only for multi-select (and not while "Other…" field is open)
                     if isMulti && !curOther {
-                        PrimaryButton(isLast ? "Send" : "Next") {
+                        PrimaryButton(isLast ? String(localized: "Send") : String(localized: "Next")) {
                             proceedFromQuestion(q: q, qi: qi, isLast: isLast)
                         }
                         .disabled(!canProceed)
@@ -496,8 +505,8 @@ struct ErrorView: View {
                     .font(.system(size: 12))
                     .foregroundColor(Color(hex: "#FF8D97"))
                 HStack(spacing: 8) {
-                    PrimaryButton("Retry") { /* retry */ }
-                    SecondaryButton("Open in n8n") { /* open */ }
+                    PrimaryButton(String(localized: "Retry")) { /* retry */ }
+                    SecondaryButton(String(localized: "Open in n8n")) { /* open */ }
                 }
             }
             .padding(.leading, 116)
@@ -518,11 +527,11 @@ struct FinishedView: View {
             CardBackground(wash: .green)
             VStack(alignment: .leading, spacing: 5) {
                 AgentWho(task: state.focusTask, label: "Claude Code finished")
-                Text(state.focusTask?.steps.last ?? "Session finished")
+                Text(state.focusTask?.steps.last ?? String(localized: "Session finished"))
                     .font(.system(size: 15, weight: .semibold))
                 HStack(spacing: 8) {
                     #if !APPSTORE
-                    PrimaryButton("Open terminal") {
+                    PrimaryButton(String(localized: "Open terminal")) {
                         let terminalBundleIds = ["com.apple.Terminal", "com.googlecode.iterm2", "net.kovidgoyal.kitty", "com.mitchellh.ghostty"]
                         let activated = terminalBundleIds.compactMap { id in
                             NSWorkspace.shared.runningApplications.first { $0.bundleIdentifier == id }
@@ -533,7 +542,7 @@ struct FinishedView: View {
                         NotificationCenter.default.post(name: .islandCollapse, object: nil)
                     }
                     #endif
-                    SecondaryButton("OK") {
+                    SecondaryButton(String(localized: "OK")) {
                         NotificationCenter.default.post(name: .islandCollapse, object: nil)
                     }
                 }
@@ -599,7 +608,7 @@ struct UploadView: View {
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(state.fileDragOver ? Color(hex: "#34D399") : Color(hex: "#D5D7DB"))
                 HStack(spacing: 6) {
-                    ForEach(["PDF", "Images", "Code", "Docs"], id: \.self) { label in
+                    ForEach([String(localized: "PDF"), String(localized: "Images"), String(localized: "Code"), String(localized: "Docs")], id: \.self) { label in
                         Text(label)
                             .font(.system(size: 11))
                             .padding(.horizontal, 8).padding(.vertical, 3)
@@ -706,12 +715,12 @@ struct UploadingView: View {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 12))
                             .foregroundColor(Color(hex: "#34D399"))
-                        Text("  \(state.droppedFile?.name ?? "File")")
+                        Text("  \(state.droppedFile?.name ?? String(localized: "File"))")
                             .font(.system(size: 12.5, weight: .semibold))
                             .foregroundColor(Color(hex: "#34D399"))
                             .lineLimit(1).truncationMode(.middle)
                     } else {
-                        Text("Uploading \(state.droppedFile?.name ?? "file")")
+                        Text("Uploading \(state.droppedFile?.name ?? String(localized: "file"))")
                             .font(.system(size: 12.5))
                             .foregroundColor(Color(hex: "#A9ADB5"))
                             .lineLimit(1).truncationMode(.middle)
@@ -742,12 +751,12 @@ struct ChooseView: View {
         ZStack(alignment: .leading) {
             CardBackground(wash: nil)
             VStack(alignment: .leading, spacing: 8) {
-                let fileName = state.droppedFile?.name ?? "file"
-                (Text(fileName).font(.system(size: 14, weight: .semibold)) + Text(" is ready.").font(.system(size: 14, weight: .semibold)))
+                let fileName = state.droppedFile?.name ?? String(localized: "file")
+                Text("\(fileName) is ready.").font(.system(size: 14, weight: .semibold))
                 Text("What do you want to do with it?").font(.system(size: 12.5)).foregroundColor(Color(hex: "#9398A1"))
                 HStack(spacing: 8) {
-                    PrimaryButton("Ask a question") { state.view = .prompt }
-                    SecondaryButton("Send by email") { state.view = .mail }
+                    PrimaryButton(String(localized: "Ask a question")) { state.view = .prompt }
+                    SecondaryButton(String(localized: "Send by email")) { state.view = .mail }
                 }
             }
             .padding(.leading, 98)
@@ -780,7 +789,7 @@ struct MailView: View {
                 }
 
                 MailField(label: "To", placeholder: "address@example.com", text: $to)
-                MailField(label: "Subject", placeholder: state.droppedFile?.name ?? "Subject", text: $subject)
+                MailField(label: "Subject", placeholder: state.droppedFile?.name ?? String(localized: "Subject"), text: $subject)
 
                 // Body — TextEditor scrolls internally when text overflows
                 TextEditor(text: $bodyText)
@@ -798,11 +807,11 @@ struct MailView: View {
                 }
 
                 HStack(spacing: 8) {
-                    PrimaryButton(isSending ? "Sending…" : "Send") {
+                    PrimaryButton(isSending ? String(localized: "Sending…") : String(localized: "Send")) {
                         guard !isSending else { return }
                         sendMail()
                     }
-                    SecondaryButton("Cancel") { state.view = .choose }
+                    SecondaryButton(String(localized: "Cancel")) { state.view = .choose }
                 }
             }
             .padding(.leading, 92)
@@ -813,7 +822,7 @@ struct MailView: View {
     }
 
     private func sendMail() {
-        guard !to.isEmpty else { statusMsg = "Missing recipient."; return }
+        guard !to.isEmpty else { statusMsg = String(localized: "Missing recipient."); return }
         let subj = subject.isEmpty ? (state.droppedFile?.name ?? "File") : subject
 
         // Prefer Resend if API key + sender address are configured
@@ -833,12 +842,12 @@ struct MailView: View {
                 await MainActor.run {
                     isSending = false
                     if ok { onSuccess(recipient: recipient) }
-                    else  { statusMsg = "Resend error — check API key & sender." }
+                    else  { statusMsg = String(localized: "Resend error — check API key & sender.") }
                 }
             }
         } else if apiKey != nil && fromAddr == nil {
             // API key set but no sender — guide user instead of silent fallback
-            statusMsg = "Set sender address in Settings."
+            statusMsg = String(localized: "Set sender address in Settings.")
         } else {
             // No Resend — fallback to Mail
             sendViaAppleMail(to: to, subject: subj)
@@ -878,7 +887,7 @@ struct MailView: View {
         #if APPSTORE
         // App Store: no AppleScript — use NSSharingService to compose (user sends manually)
         guard let service = NSSharingService(named: .composeEmail) else {
-            statusMsg = "Mail not available."
+            statusMsg = String(localized: "Mail not available.")
             return
         }
         var items: [Any] = [bodyText.isEmpty ? " " : bodyText]
@@ -924,14 +933,14 @@ struct MailView: View {
         var err: NSDictionary?
         NSAppleScript(source: script)?.executeAndReturnError(&err)
         if err == nil { onSuccess(recipient: to) }
-        else { statusMsg = "Mail error: \(err?["NSAppleScriptErrorMessage"] as? String ?? "unknown")" }
+        else { statusMsg = String(localized: "Mail error: \(err?["NSAppleScriptErrorMessage"] as? String ?? String(localized: "unknown"))") }
         #endif
     }
 
     private func onSuccess(recipient: String) {
         SoundEngine.shared.play("send")
         NotificationCenter.default.post(name: .triggerEmote, object: BotEmote.wink)
-        state.noteMessage = "Email sent to \(recipient)."
+        state.noteMessage = String(localized: "Email sent to \(recipient).")
         state.view = .note
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
             NotificationCenter.default.post(name: .islandCollapse, object: nil)
@@ -946,6 +955,9 @@ struct PromptView: View {
     @State private var text: String = ""
     @FocusState private var focused: Bool
     @State private var showModelPicker = false
+    @State private var showChats = false
+    @State private var showActions = false
+    @ObservedObject private var chats = ChatSessions.shared
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -991,9 +1003,53 @@ struct PromptView: View {
                     .frame(maxHeight: .infinity)
                 } else {
                     Spacer()
+                    if AgentTools.enabled { AssistantChips(state: state) }
                 }
 
-                HStack(spacing: 0) {
+                HStack(spacing: 6) {
+                    // Chats: switch, new, clear
+                    Button { showChats.toggle() } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "bubble.left.and.bubble.right").font(.system(size: 9))
+                            Text((chats.current?.title).flatMap { $0.isEmpty ? nil : $0 } ?? String(localized: "New chat"))
+                                .font(.system(size: 10.5, weight: .medium))
+                                .lineLimit(1)
+                                .frame(maxWidth: 150, alignment: .leading)
+                            Image(systemName: "chevron.up.chevron.down").font(.system(size: 8))
+                        }
+                        .foregroundColor(Color(hex: "#7B8089"))
+                        .padding(.horizontal, 8).padding(.vertical, 4)
+                        .background(Color.white.opacity(0.06))
+                        .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .popover(isPresented: $showChats, arrowEdge: .bottom) {
+                        ChatsPopover(isPresented: $showChats)
+                    }
+                    Button { chats.newChat(); focused = true } label: {
+                        Image(systemName: "plus").font(.system(size: 9, weight: .semibold))
+                            .foregroundColor(Color(hex: "#7B8089"))
+                            .frame(width: 22, height: 22)
+                            .background(Color.white.opacity(0.06)).clipShape(Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .help(String(localized: "New chat"))
+                    if AgentTools.enabled {
+                        Button { showActions.toggle() } label: {
+                            Image(systemName: "bolt.fill").font(.system(size: 9, weight: .semibold))
+                                .foregroundColor(Color(hex: "#F5A524"))
+                                .frame(width: 22, height: 22)
+                                .background(Color.white.opacity(0.06)).clipShape(Circle())
+                        }
+                        .buttonStyle(.plain)
+                        .help(String(localized: "Actions"))
+                        .popover(isPresented: $showActions, arrowEdge: .bottom) {
+                            ActionsPopover(state: state, isPresented: $showActions) { sentence in
+                                text = sentence
+                                focused = true
+                            }
+                        }
+                    }
                     Spacer()
                     Button {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
@@ -1025,11 +1081,13 @@ struct PromptView: View {
                 .padding(.horizontal, 10)
 
                 HStack(spacing: 8) {
-                    TextField(state.chatHistory.isEmpty ? "Ask me anything…" : "Continue…", text: $text)
+                    TextField(state.chatHistory.isEmpty ? String(localized: "Ask me anything…") : String(localized: "Continue…"), text: $text)
                         .textFieldStyle(.plain)
                         .font(.system(size: 13))
                         .focused($focused)
                         .onSubmit { sendMessage() }
+
+                    VoiceMicButton(accent: Color(hex: state.chatProvider.accentHex))
 
                     Button(action: sendMessage) {
                         Image(systemName: "arrow.up")
@@ -1118,6 +1176,7 @@ struct ModelPickerView: View {
             let visibleProviders = ChatProvider.allCases.filter { p in
                 if p == .ollama   { return !AppState.shared.ollamaServerURL.isEmpty   || state.chatProvider == .ollama }
                 if p == .lmstudio { return !AppState.shared.lmstudioServerURL.isEmpty || state.chatProvider == .lmstudio }
+                if p.isCLI        { return state.enabledCLIProviders.contains(p.rawValue) || state.chatProvider == p }
                 return true
             }
             ChipFlowLayout(spacing: 6) {
@@ -1205,6 +1264,9 @@ struct ModelPickerView: View {
                             case .openai:    state.openAIChatModel = model.id
                             case .ollama:    state.ollamaChatModel = model.id
                             case .lmstudio:  state.lmstudioChatModel = model.id
+                            case .minimax:   state.minimaxChatModel = model.id
+                            case .claudeCLI: state.claudeCLIModel = model.id
+                            case .codexCLI:  state.codexCLIModel = model.id
                             }
                             isPresented = false
                             SoundEngine.shared.play("blip")
@@ -1243,7 +1305,16 @@ struct ChatBubble: View {
     var body: some View {
         if !message.content.isEmpty {
             HStack(alignment: .top) {
-                if message.role == .user {
+                if message.role == .action {
+                    Text(message.content)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(Color(hex: "#8E939C"))
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 8).padding(.vertical, 3)
+                        .background(Color.white.opacity(0.05))
+                        .clipShape(Capsule())
+                    Spacer(minLength: 8)
+                } else if message.role == .user {
                     Spacer(minLength: 32)
                     Text(message.content)
                         .font(.system(size: 12.5))
@@ -1290,9 +1361,9 @@ struct SearchingView: View {
 
     var label: String {
         switch state.promptContext {
-        case .window(_, let title, _): return "Claude is reading \(title)…"
-        case .file(let name, _): return "Claude is reading \(name)…"
-        case nil: return "Claude is searching…"
+        case .window(_, let title, _): return String(localized: "Claude is reading \(title)…")
+        case .file(let name, _): return String(localized: "Claude is reading \(name)…")
+        case nil: return String(localized: "Claude is searching…")
         }
     }
 
@@ -1348,17 +1419,17 @@ struct ResultView: View {
                         // The URL comes from the model, which may have read attacker-controlled
                         // files or pages: only plain web links may leave the app.
                         let openURL = safeWebURL(result.items.first?.url)
-                        PrimaryButton("Open") {
+                        PrimaryButton(String(localized: "Open")) {
                             if let openURL { NSWorkspace.shared.open(openURL) }
                         }
                         .disabled(openURL == nil)
                         .help(openURL?.absoluteString ?? "")
-                        SecondaryButton("Copy") {
+                        SecondaryButton(String(localized: "Copy")) {
                             let text = result.items.map { "\($0.label): \($0.detail)" }.joined(separator: "\n")
                             NSPasteboard.general.clearContents()
                             NSPasteboard.general.setString(text, forType: .string)
                         }
-                        SecondaryButton("Close") { state.view = state.tasks.isEmpty ? .empty : .overview }
+                        SecondaryButton(String(localized: "Close")) { state.view = state.tasks.isEmpty ? .empty : .overview }
                     }
                 }
                 .padding(.leading, 84)
@@ -1533,12 +1604,12 @@ struct IntegrationCardView: View {
     private var statusLabel: String {
         #if !APPSTORE
         if task.id == "integration_music" {
-            if appState.musicAutomationDenied { return "Automation not allowed" }
-            if appState.musicPlaying { return "Playing · \(MusicController.shared.trackTitle ?? "Unknown")" }
-            return "Not playing"
+            if appState.musicAutomationDenied { return String(localized: "Automation not allowed") }
+            if appState.musicPlaying { return String(localized: "Playing · \(MusicController.shared.trackTitle ?? String(localized: "Unknown"))") }
+            return String(localized: "Not playing")
         }
         #endif
-        if PillCatalog.definition(for: task.id)?.comingSoon == true { return "Coming soon" }
+        if PillCatalog.definition(for: task.id)?.comingSoon == true { return String(localized: "Coming soon") }
         let svcErr = task.id == "integration_stripe" ? appState.stripeError
                    : task.id == "integration_calcom"  ? appState.calcomError
                    : nil
@@ -1546,12 +1617,12 @@ struct IntegrationCardView: View {
         let isHooks = task.id == "agent_gemini" || task.id == "agent_antigravity"
         let isAI    = ChatProvider(pillID: task.id) != nil
         if isConfigured {
-            if isHooks { return "Hooks installed" }
+            if isHooks { return String(localized: "Hooks installed") }
             if isAI {
                 let provider = ChatProvider(pillID: task.id)!
                 if provider.isLocal {
                     let model = provider == .ollama ? appState.ollamaChatModel : appState.lmstudioChatModel
-                    return "Connected · \(model)"
+                    return String(localized: "Connected · \(model)")
                 }
                 let model: String
                 switch task.id {
@@ -1560,16 +1631,16 @@ struct IntegrationCardView: View {
                 case "ai_openai":    model = appState.openAIChatModel
                 default:             model = ""
                 }
-                return "Key configured · \(model)"
+                return String(localized: "Key configured · \(model)")
             }
-            return "Connected · loading…"
+            return String(localized: "Connected · loading…")
         } else {
-            if isHooks { return "Hooks not installed" }
+            if isHooks { return String(localized: "Hooks not installed") }
             if isAI {
                 let provider = ChatProvider(pillID: task.id)!
-                return provider.isLocal ? "Not connected" : "Key not configured"
+                return provider.isLocal ? String(localized: "Not connected") : String(localized: "Key not configured")
             }
-            return "Key not configured"
+            return String(localized: "Key not configured")
         }
     }
 
@@ -1621,7 +1692,7 @@ struct IntegrationCardView: View {
                         .foregroundColor(Color(hex: "#F5F6F8"))
                         .lineLimit(1).truncationMode(.tail)
                         .layoutPriority(1)
-                    Text(PillCatalog.definition(for: task.id)?.sessionSubtitle ?? "Agent")
+                    Text(PillCatalog.definition(for: task.id)?.sessionSubtitle ?? String(localized: "Agent"))
                         .font(.system(size: 11))
                         .foregroundColor(Color(hex: "#8E939C"))
                         .lineLimit(1).truncationMode(.tail)
@@ -1655,7 +1726,7 @@ struct IntegrationCardView: View {
                     Text(PillCatalog.definition(for: task.id)?.name ?? task.name)
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(Color(hex: "#F5F6F8"))
-                    Text(PillCatalog.definition(for: task.id)?.subtitle ?? "Integration")
+                    Text(PillCatalog.definition(for: task.id)?.subtitle ?? String(localized: "Integration"))
                         .font(.system(size: 11))
                         .foregroundColor(Color(hex: "#8E939C"))
                     Spacer(minLength: 2)
@@ -1736,7 +1807,7 @@ struct IntegrationCardView: View {
                         }) {
                             HStack(spacing: 5) {
                                 Circle().fill(accent).frame(width: 5, height: 5)
-                                Text(task.steps.first ?? "Workflow")
+                                Text(task.steps.first ?? String(localized: "Workflow"))
                                     .font(.system(size: 11))
                                     .foregroundColor(Color(hex: "#C5C8CD"))
                                     .lineLimit(1).truncationMode(.tail)
@@ -1956,7 +2027,7 @@ struct VercelDetailView: View {
                             .font(.system(size: 10))
                             .foregroundColor(Color(hex: "#6B7079"))
                     }
-                    Text(deployment.timeAgo + " ago")
+                    Text(String(localized: "\(deployment.timeAgo) ago"))
                         .font(.system(size: 10))
                         .foregroundColor(Color(hex: "#6B7079"))
                 }
@@ -2125,7 +2196,7 @@ struct GitHubStatsCardView: View {
 private struct StatRow: View {
     let icon: String
     let color: String
-    let label: String
+    let label: LocalizedStringKey
     let value: String
 
     var body: some View {
@@ -2217,7 +2288,7 @@ private struct StripePaymentRow: View {
         let accent = payment.isSuccess ? Color(hex: "#22C55E") : Color(hex: "#F4505E")
         HStack(spacing: 5) {
             Circle().fill(accent).frame(width: 5, height: 5)
-            Text(payment.description ?? "Payment")
+            Text(payment.description ?? String(localized: "Payment"))
                 .font(.system(size: 11))
                 .foregroundColor(Color(hex: "#C5C8CD"))
                 .lineLimit(1).truncationMode(.tail)
@@ -2584,7 +2655,7 @@ struct N8nDetailView: View {
 
     private var success: Bool  { task.state == .finished }
     private var accent: Color  { success ? Color(hex: "#22C55E") : Color(hex: "#F4505E") }
-    private var statusLabel: String { success ? "Success" : "Failed" }
+    private var statusLabel: String { success ? String(localized: "Success") : String(localized: "Failed") }
     private var detail: String? { task.steps.dropFirst().first }
 
     var body: some View {
@@ -2603,7 +2674,7 @@ struct N8nDetailView: View {
 
                 Circle().fill(accent).frame(width: 6, height: 6)
 
-                Text(task.steps.first ?? "Workflow")
+                Text(task.steps.first ?? String(localized: "Workflow"))
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(Color(hex: "#F5F6F8"))
                     .lineLimit(1).truncationMode(.middle)
@@ -2631,7 +2702,7 @@ struct N8nDetailView: View {
                 }
                 .frame(maxHeight: 88)
             } else {
-                Text(success ? "Completed successfully." : "No error details available.")
+                Text(success ? String(localized: "Completed successfully.") : String(localized: "No error details available."))
                     .font(.system(size: 11))
                     .foregroundColor(Color(hex: "#6B7079"))
             }
@@ -3286,7 +3357,7 @@ extension CardBackground where Content == EmptyView {
 
 struct AgentWho: View {
     let task: AgentTask?
-    let label: String
+    let label: LocalizedStringKey
 
     var body: some View {
         HStack(spacing: 7) {
@@ -3350,7 +3421,7 @@ struct ContextChip: View {
 }
 
 struct MailField: View {
-    let label: String
+    let label: LocalizedStringKey
     let placeholder: String
     @Binding var text: String
 

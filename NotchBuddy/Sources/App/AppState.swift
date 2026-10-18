@@ -53,6 +53,27 @@ final class AppState: ObservableObject {
         didSet { UserDefaults.standard.set(soundEnabled, forKey: "soundEnabled") }
     }
 
+    // App language: "system" | "en" | "es" — persisted; applied through AppleLanguages at next launch
+    @Published var appLanguage: String = "system" {
+        didSet {
+            let ud = UserDefaults.standard
+            ud.set(appLanguage, forKey: "appLanguage")
+            switch appLanguage {
+            case "en": ud.set(["en"], forKey: "AppleLanguages")
+            case "es": ud.set(["es"], forKey: "AppleLanguages")
+            default:   ud.removeObject(forKey: "AppleLanguages")
+            }
+        }
+    }
+
+    /// Relaunches the app (used after a language change).
+    func relaunchApp() {
+        let cfg = NSWorkspace.OpenConfiguration()
+        cfg.createsNewApplicationInstance = true
+        NSWorkspace.shared.openApplication(at: Bundle.main.bundleURL, configuration: cfg) { _, _ in }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { NSApp.terminate(nil) }
+    }
+
     // Claude model used by the chat and the search — persisted
     static let defaultClaudeModel = "claude-sonnet-4-6"
     @Published var claudeModel: String = AppState.defaultClaudeModel {
@@ -74,6 +95,19 @@ final class AppState: ObservableObject {
     }
     @Published var lmstudioChatModel: String = ChatProvider.lmstudio.defaultModel {
         didSet { UserDefaults.standard.set(lmstudioChatModel, forKey: "lmstudioChatModel") }
+    }
+    @Published var minimaxChatModel: String = ChatProvider.minimax.defaultModel {
+        didSet { UserDefaults.standard.set(minimaxChatModel, forKey: "minimaxChatModel") }
+    }
+    @Published var claudeCLIModel: String = ChatProvider.claudeCLI.defaultModel {
+        didSet { UserDefaults.standard.set(claudeCLIModel, forKey: "claudeCLIModel") }
+    }
+    @Published var codexCLIModel: String = ChatProvider.codexCLI.defaultModel {
+        didSet { UserDefaults.standard.set(codexCLIModel, forKey: "codexCLIModel") }
+    }
+    /// CLI providers the user signed in to from Settings (persisted; shown in the model picker).
+    @Published var enabledCLIProviders: Set<String> = [] {
+        didSet { UserDefaults.standard.set(Array(enabledCLIProviders), forKey: "enabledCLIProviders") }
     }
     @Published var ollamaServerURL: String = "" {
         didSet { UserDefaults.standard.set(ollamaServerURL, forKey: "ollamaServerURL") }
@@ -103,8 +137,8 @@ final class AppState: ObservableObject {
             let normalised = LocalChat.normaliseURL(baseURL)
             guard !normalised.isEmpty else {
                 providerModelFetchError[provider] = provider == .ollama
-                    ? "Connect Ollama in Settings → Chat first."
-                    : "Connect LM Studio in Settings → Chat first."
+                    ? String(localized: "Connect Ollama in Settings → Chat first.")
+                    : String(localized: "Connect LM Studio in Settings → Chat first.")
                 return
             }
             loadingProviderModels.insert(provider)
@@ -115,8 +149,8 @@ final class AppState: ObservableObject {
                 switch result {
                 case .success(let models) where models.isEmpty:
                     providerModelFetchError[provider] = provider == .ollama
-                        ? "No models yet. Download one in Ollama first."
-                        : "No models yet. Download one in LM Studio first."
+                        ? String(localized: "No models yet. Download one in Ollama first.")
+                        : String(localized: "No models yet. Download one in LM Studio first.")
                 case .success(let models):
                     fetchedProviderModels[provider] = models
                     let current = provider == .ollama ? ollamaChatModel : lmstudioChatModel
@@ -126,14 +160,19 @@ final class AppState: ObservableObject {
                         else                   { lmstudioChatModel = first }
                     }
                 case .failure:
-                    providerModelFetchError[provider] = "Cannot reach \(normalised). Is the server running?"
+                    providerModelFetchError[provider] = String(localized: "Cannot reach \(normalised). Is the server running?")
                 }
             }
             return
         }
+        // Fixed lists: MiniMax models and the CLI aliases need no network call
+        if let fixed = ChatProvider.fixedModels[provider] {
+            fetchedProviderModels[provider] = fixed
+            return
+        }
         // Remote providers: require API key
         guard let apiKey = KeychainStore.shared.get(provider.keychainKey), !apiKey.isEmpty else {
-            providerModelFetchError[provider] = "No API key — add it in Settings."
+            providerModelFetchError[provider] = String(localized: "No API key — add it in Settings.")
             return
         }
         loadingProviderModels.insert(provider)
@@ -144,11 +183,11 @@ final class AppState: ObservableObject {
             case .anthropic: models = await ClaudeService.fetchModels(apiKey: apiKey)
             case .google:    models = await ClaudeService.fetchGoogleModels(apiKey: apiKey)
             case .openai:    models = await ClaudeService.fetchOpenAIModels(apiKey: apiKey)
-            case .ollama, .lmstudio: models = []  // handled above
+            case .ollama, .lmstudio, .minimax, .claudeCLI, .codexCLI: models = []  // handled above
             }
             loadingProviderModels.remove(provider)
             if models.isEmpty {
-                providerModelFetchError[provider] = "Failed to load models. Check your API key."
+                providerModelFetchError[provider] = String(localized: "Failed to load models. Check your API key.")
             } else {
                 fetchedProviderModels[provider] = models
                 switch provider {
@@ -164,7 +203,7 @@ final class AppState: ObservableObject {
                     if !models.contains(where: { $0.id == openAIChatModel }) {
                         openAIChatModel = models.first(where: { $0.id.contains("mini") })?.id ?? models.first!.id
                     }
-                case .ollama, .lmstudio: break
+                case .ollama, .lmstudio, .minimax, .claudeCLI, .codexCLI: break
                 }
             }
         }
@@ -178,6 +217,9 @@ final class AppState: ObservableObject {
         case .openai:    return openAIChatModel
         case .ollama:    return ollamaChatModel
         case .lmstudio:  return lmstudioChatModel
+        case .minimax:   return minimaxChatModel
+        case .claudeCLI: return claudeCLIModel
+        case .codexCLI:  return codexCLIModel
         }
     }
 
@@ -283,10 +325,14 @@ final class AppState: ObservableObject {
     @Published var notionError: String? = nil
 
     // Chat conversation history
-    @Published var chatHistory: [ChatMessage] = []
+    @Published var chatHistory: [ChatMessage] = [] {
+        didSet { ChatSessions.shared.historyChanged() }
+    }
 
     // Pending approval request from Claude Code hook
     @Published var pendingApproval: ApprovalInfo? = nil
+    /// An action the assistant wants to run (send email, WhatsApp, create event…): waits for a click.
+    @Published var pendingAction: AgentActionRequest? = nil
 
     // Pending AskUserQuestion from Claude Code hook
     @Published var pendingQuestion: AskQuestion? = nil
@@ -326,6 +372,7 @@ final class AppState: ObservableObject {
     private init() {
         let ud = UserDefaults.standard
 
+        if let v = ud.string(forKey: "appLanguage"), ["system", "en", "es"].contains(v) { appLanguage = v }
         if let v = ud.object(forKey: "soundEnabled") as? Bool   { soundEnabled = v }
         if let v = ud.object(forKey: "soundVolume")  as? Double { soundVolume  = v }
         if let v = ud.string(forKey: "claudeModel"),
@@ -335,6 +382,10 @@ final class AppState: ObservableObject {
         if let v = ud.string(forKey: "openAIChatModel"), !v.isEmpty { openAIChatModel = v }
         if let v = ud.string(forKey: "ollamaChatModel"), !v.isEmpty { ollamaChatModel = v }
         if let v = ud.string(forKey: "lmstudioChatModel"), !v.isEmpty { lmstudioChatModel = v }
+        if let v = ud.string(forKey: "minimaxChatModel"), !v.isEmpty { minimaxChatModel = v }
+        if let v = ud.string(forKey: "claudeCLIModel"), !v.isEmpty { claudeCLIModel = v }
+        if let v = ud.string(forKey: "codexCLIModel"), !v.isEmpty { codexCLIModel = v }
+        if let v = ud.stringArray(forKey: "enabledCLIProviders") { enabledCLIProviders = Set(v) }
         if let v = ud.string(forKey: "ollamaServerURL"), !v.isEmpty { ollamaServerURL = v }
         if let v = ud.string(forKey: "lmstudioServerURL"), !v.isEmpty { lmstudioServerURL = v }
         // Migrate old 60s default → 15s
@@ -551,10 +602,10 @@ struct VercelDeployment: Identifiable {
     let branch: String?
 
     var isSuccess: Bool { state == "READY" }
-    var statusLabel: String { isSuccess ? "Ready" : (state == "CANCELED" ? "Canceled" : "Error") }
+    var statusLabel: String { isSuccess ? String(localized: "Ready") : (state == "CANCELED" ? String(localized: "Canceled") : String(localized: "Error")) }
     var timeAgo: String {
         let diff = Date().timeIntervalSince(createdAt)
-        if diff < 60    { return "just now" }
+        if diff < 60    { return String(localized: "just now") }
         if diff < 3600  { return "\(Int(diff/60))m" }
         if diff < 86400 { return "\(Int(diff/3600))h" }
         return "\(Int(diff/86400))d"
@@ -576,7 +627,7 @@ struct ResendEmail: Identifiable {
     }
     var timeAgo: String {
         let diff = Date().timeIntervalSince(createdAt)
-        if diff < 60    { return "just now" }
+        if diff < 60    { return String(localized: "just now") }
         if diff < 3600  { return "\(Int(diff/60))m" }
         if diff < 86400 { return "\(Int(diff/3600))h" }
         return "\(Int(diff/86400))d"
@@ -605,7 +656,7 @@ struct StripePayment: Identifiable, Equatable {
     var isSuccess: Bool { status == "succeeded" }
     var timeAgo: String {
         let diff = Date().timeIntervalSince(createdAt)
-        if diff < 60    { return "just now" }
+        if diff < 60    { return String(localized: "just now") }
         if diff < 3600  { return "\(Int(diff/60))m" }
         if diff < 86400 { return "\(Int(diff/3600))h" }
         return "\(Int(diff/86400))d"
@@ -645,7 +696,7 @@ struct NotionPage: Identifiable {
 
     var timeAgo: String {
         let diff = Date().timeIntervalSince(lastEditedAt)
-        if diff < 60 { return "now" }
+        if diff < 60 { return String(localized: "now") }
         if diff < 3600 { return "\(Int(diff/60))m" }
         if diff < 86400 { return "\(Int(diff/3600))h" }
         return "\(Int(diff/86400))d"
@@ -654,7 +705,7 @@ struct NotionPage: Identifiable {
 
 // MARK: - Chat
 
-enum ChatRole { case user, assistant }
+enum ChatRole { case user, assistant, action }   // action = a small note of something Mochi did
 
 struct ChatMessage: Identifiable, Equatable {
     let id = UUID()

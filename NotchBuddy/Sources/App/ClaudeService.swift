@@ -71,10 +71,21 @@ final class KeychainStore: @unchecked Sendable {
         "stripe-api-key",
         "calcom-api-key",
         "notion-api-key",
+        "maileroo-api-key", "maileroo-from", "maileroo-from-name",
+        "whatsapp-api-config", "whatsapp-default-to", "custom-actions",
     ]
 
     private init() {
         // Called once, on main thread (AppDelegate triggers shared at launch).
+        #if DEBUG
+        // Automated debug runs skip the Keychain: an unsigned build would block on a permission dialog
+        if UserDefaults.standard.string(forKey: "debugCommand") != nil {
+            // -debugKeychain <base64 of a JSON {"name":"value"}> fills the in-memory cache for tests
+            if let b64 = UserDefaults.standard.string(forKey: "debugKeychain"), let raw = Data(base64Encoded: b64),
+               let dict = (try? JSONSerialization.jsonObject(with: raw)) as? [String: String] { cache = dict }
+            return
+        }
+        #endif
         for key in Self.allKeys {
             if let v = Keychain.load(key: key) { cache[key] = v }
         }
@@ -188,6 +199,47 @@ final class ClaudeService {
 
     func clearConversation() {
         conversationMessages = []
+        attachedContextKey = nil
+    }
+
+    /// Restores the model's memory of a saved chat (text of each turn; attached files are not kept).
+    func loadConversation(_ turns: [(role: String, content: String)]) {
+        conversationMessages = turns.map { ["role": $0.role == "user" ? "user" : "assistant", "content": $0.content] }
+        attachedContextKey = nil
+    }
+
+    // The window/file context is sent with the first message, and again whenever the user
+    // drops a different file or window mid-conversation.
+    private var attachedContextKey: String?
+
+    private func contextKey(_ ctx: PromptContext) -> String {
+        switch ctx {
+        case .window(let app, let title, let url): return "w|\(app)|\(title)|\(url ?? "")"
+        case .file(let name, let url):             return "f|\(name)|\(url?.path ?? "")"
+        }
+    }
+
+    /// True when `ctx` has not been sent yet; remembers it as sent.
+    private func shouldAttach(_ ctx: PromptContext?) -> Bool {
+        guard let ctx else { return false }
+        let key = contextKey(ctx)
+        guard key != attachedContextKey else { return false }
+        attachedContextKey = key
+        return true
+    }
+
+    /// Text version of the context for every provider that takes text only.
+    private func contextText(_ ctx: PromptContext, limit: Int) async -> String {
+        switch ctx {
+        case .window(let app, let title, let url):
+            var prefix = "Context — App: \(app), Window: \(title)"
+            if let u = url { prefix += ", URL: \(u)" }
+            return prefix
+        case .file(let name, let fileURL):
+            guard let fileURL else { return "File: \(name)" }
+            let body = await FileTextExtractor.text(for: fileURL, limit: limit)
+            return "The user attached the file \"\(name)\". Its contents:\n\n\(body)"
+        }
     }
 
     /// Resolved once: NSFullUserName() is a system call, and the name cannot change under us
@@ -217,20 +269,27 @@ final class ClaudeService {
     // MARK: - Chat (multi-turn, natural text + web search)
 
     func chat(query: String, context: PromptContext?, state: AppState) async {
+        AgentLog.log("chat", "USER (\(state.chatProvider.rawValue)/\(state.activeChatModel)): \(AgentLog.clip(query, 300))")
+        // Simple commands (timer, pomodoro, reminder, agenda, tasks) run locally, without the model
+        if await AgentRouter.handle(query, state: state) { return }
+        if state.chatProvider.isCLI {
+            await chatCLI(query: query, context: context, state: state)
+            return
+        }
         guard state.chatProvider == .anthropic else {
             await chatOpenAICompatible(query: query, context: context, state: state)
             return
         }
         guard let key = apiKey, !key.isEmpty else {
-            await showError("API key missing. Open settings.", state: state)
+            await showError(String(localized: "API key missing. Open settings."), state: state)
             return
         }
 
         // Build user content for this turn
         var userContent: [[String: Any]] = []
 
-        // Add file/window context on first message only
-        if conversationMessages.isEmpty, let context = context {
+        // Add file/window context with the first message, or when a new file/window is attached
+        if shouldAttach(context), let context = context {
             switch context {
             case .window(let app, let title, let url):
                 var text = "Context — App: \(app), Window: \(title)"
@@ -239,6 +298,10 @@ final class ClaudeService {
             case .file(let name, let fileURL):
                 if let fileURL = fileURL, let block = readFileAsBlock(url: fileURL) {
                     userContent.append(block)
+                } else if let fileURL = fileURL {
+                    // Types the API cannot take natively (Word, Excel…): send their text
+                    let body = await FileTextExtractor.text(for: fileURL, limit: 60_000)
+                    userContent.append(["type": "text", "text": "File contents:\n\(body)"])
                 }
                 userContent.append(["type": "text", "text": "File: \(name)"])
             }
@@ -247,16 +310,34 @@ final class ClaudeService {
 
         conversationMessages.append(["role": "user", "content": userContent])
 
-        let body: [String: Any] = [
-            "model": model,
-            "max_tokens": 4096,
-            "tools": webSearchTools,
-            "system": systemPrompt,
-            "messages": conversationMessages,
-        ]
+        let useTools = AgentTools.enabled
+        let tools = webSearchTools + (useTools ? AgentTools.anthropicDefinitions() : [])
+        let system = systemPrompt + (useTools ? AgentTools.systemAddendum() : "")
+        func makeBody(_ messages: [[String: Any]]) -> [String: Any] {
+            ["model": model, "max_tokens": 4096, "tools": tools, "system": system, "messages": messages]
+        }
 
         do {
-            let data = try await callAPI(body: body, key: key, beta: "web-search-2025-03-05")
+            // Tool exchanges stay in `working`; only the final answer joins the stored conversation.
+            var working = conversationMessages
+            var data = try await callAPI(body: makeBody(working), key: key, beta: "web-search-2025-03-05")
+            var rounds = 0
+            while useTools, rounds < 6,
+                  let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+                  (json["stop_reason"] as? String) == "tool_use",
+                  let content = json["content"] as? [[String: Any]] {
+                let uses = content.filter { ($0["type"] as? String) == "tool_use" }
+                if uses.isEmpty { break }
+                rounds += 1
+                working.append(["role": "assistant", "content": content])
+                var results: [[String: Any]] = []
+                for u in uses {
+                    let out = await AgentTools.run(name: u["name"] as? String ?? "", arguments: u["input"] as? [String: Any] ?? [:])
+                    results.append(["type": "tool_result", "tool_use_id": u["id"] ?? "", "content": out])
+                }
+                working.append(["role": "user", "content": results])
+                data = try await callAPI(body: makeBody(working), key: key, beta: "web-search-2025-03-05")
+            }
             await handleChatResult(data, state: state)
         } catch {
             conversationMessages.removeLast()
@@ -279,14 +360,15 @@ final class ClaudeService {
             switch provider {
             case .google:  baseURL = "https://generativelanguage.googleapis.com/v1beta/openai"
             case .openai:  baseURL = "https://api.openai.com/v1"
-            case .anthropic, .ollama, .lmstudio: baseURL = ""
+            case .minimax: baseURL = UserDefaults.standard.string(forKey: "minimaxBaseURL").flatMap { $0.isEmpty ? nil : $0 } ?? MiniMaxVoice.baseURL
+            case .anthropic, .ollama, .lmstudio, .claudeCLI, .codexCLI: baseURL = ""
             }
         }
 
         guard !baseURL.isEmpty else {
             if provider.isLocal {
                 let name = provider == .ollama ? "Ollama" : "LM Studio"
-                await showError("Connect \(name) in Settings → Chat first.", state: state)
+                await showError(String(localized: "Connect \(name) in Settings → Chat first."), state: state)
             }
             return
         }
@@ -298,14 +380,15 @@ final class ClaudeService {
             authHeader = "Bearer ollama"
         } else {
             guard let key = KeychainStore.shared.get(provider.keychainKey), !key.isEmpty else {
-                await showError("\(provider.displayName) API key missing. Configure it in Settings.", state: state)
+                await showError(String(localized: "\(provider.displayName) API key missing. Configure it in Settings."), state: state)
                 return
             }
             authHeader = "Bearer \(key)"
         }
 
         // Build messages
-        var msgs: [[String: Any]] = [["role": "system", "content": systemPrompt]]
+        let useTools = AgentTools.enabled && !provider.isLocal
+        var msgs: [[String: Any]] = [["role": "system", "content": systemPrompt + (useTools ? AgentTools.systemAddendum() : "")]]
         for m in conversationMessages {
             var simplified = m
             if let content = m["content"] as? [[String: Any]],
@@ -316,29 +399,9 @@ final class ClaudeService {
             msgs.append(simplified)
         }
         var userText = query
-        if conversationMessages.isEmpty, let ctx = context {
-            switch ctx {
-            case .window(let app, let title, let url):
-                var prefix = "Context — App: \(app), Window: \(title)"
-                if let u = url { prefix += ", URL: \(u)" }
-                userText = prefix + "\n\n" + query
-            case .file(let name, let fileURL):
-                if provider.isLocal, let fileURL = fileURL {
-                    let ext = fileURL.pathExtension.lowercased()
-                    let binaryExts = ["pdf", "jpg", "jpeg", "png", "gif", "webp"]
-                    if !binaryExts.contains(ext),
-                       let text = try? String(contentsOf: fileURL, encoding: .utf8), !text.isEmpty {
-                        let truncated = text.count > 24_000
-                            ? String(text.prefix(24_000)) + "\n[truncated]"
-                            : text
-                        userText = "File: \(name)\n\n\(truncated)\n\n" + query
-                    } else {
-                        userText = "File: \(name)\n\n" + query
-                    }
-                } else {
-                    userText = "File: \(name)\n\n" + query
-                }
-            }
+        if shouldAttach(context), let ctx = context {
+            let prefix = await contextText(ctx, limit: provider.isLocal ? 24_000 : 60_000)
+            userText = prefix + "\n\n" + query
         }
         msgs.append(["role": "user", "content": userText])
         conversationMessages.append(["role": "user", "content": userText])
@@ -399,10 +462,10 @@ final class ClaudeService {
                 switch e {
                 case .serverUnreachable:
                     msg = provider == .ollama
-                        ? "Ollama isn't running. Open it, then ask again."
-                        : "Start the local server in LM Studio, then ask again."
+                        ? String(localized: "Ollama isn't running. Open it, then ask again.")
+                        : String(localized: "Start the local server in LM Studio, then ask again.")
                 case .modelNotFound(let m):
-                    msg = "\(m) isn't installed. Pick another model above the chat box."
+                    msg = String(localized: "\(m) isn't installed. Pick another model above the chat box.")
                 case .serverError(let s):
                     msg = s
                 }
@@ -414,23 +477,73 @@ final class ClaudeService {
                 await showError(error.localizedDescription, state: state)
             }
         } else {
-            // Non-streaming (Google, OpenAI)
+            // Non-streaming (Google, OpenAI, MiniMax): with tool calling for the agent actions
             do {
-                let (data, response) = try await URLSession.shared.data(for: req)
-                guard (response as? HTTPURLResponse)?.statusCode == 200 else {
-                    if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                       let err = (json["error"] as? [String: Any])?["message"] as? String {
-                        throw NSError(domain: "ChatAPI", code: 0, userInfo: [NSLocalizedDescriptionKey: err])
+                var working = msgs
+                var rounds = 0
+                var finalText: String?
+                let model = state.activeChatModel
+                let toolNames = useTools ? AgentTools.definitions().compactMap { ($0["function"] as? [String: Any])?["name"] as? String } : []
+                AgentLog.log("llm", "→ \(provider.rawValue) model=\(model) tools=\(toolNames.isEmpty ? "off" : toolNames.joined(separator: ",")) messages=\(working.count)")
+                while finalText == nil {
+                    var payload: [String: Any] = ["model": model, "messages": working]
+                    // MiniMax deprecated max_tokens in favor of max_completion_tokens
+                    payload[provider == .minimax ? "max_completion_tokens" : "max_tokens"] = 4096
+                    if useTools { payload["tools"] = AgentTools.definitions() }
+                    req.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+                    let (data, response) = try await URLSession.shared.data(for: req)
+                    let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+                    guard status == 200 else {
+                        AgentLog.log("llm", "← HTTP \(status) body=\(AgentLog.clip(String(data: data, encoding: .utf8) ?? "", 500))")
+                        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                           let err = (json["error"] as? [String: Any])?["message"] as? String {
+                            throw NSError(domain: "ChatAPI", code: 0, userInfo: [NSLocalizedDescriptionKey: err])
+                        }
+                        throw NSError(domain: "ChatAPI", code: 0, userInfo: [NSLocalizedDescriptionKey: String(localized: "HTTP \(status)")])
                     }
-                    throw NSError(domain: "ChatAPI", code: 0, userInfo: [NSLocalizedDescriptionKey: "HTTP \((response as? HTTPURLResponse)?.statusCode ?? 0)"])
+                    guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                          let choices = json["choices"] as? [[String: Any]],
+                          let message = choices.first?["message"] as? [String: Any] else {
+                        AgentLog.log("llm", "← unexpected body=\(AgentLog.clip(String(data: data, encoding: .utf8) ?? "", 500))")
+                        throw NSError(domain: "ChatAPI", code: 0, userInfo: [NSLocalizedDescriptionKey: String(localized: "Unexpected response format")])
+                    }
+                    let content = message["content"] as? String
+                    let calls = (message["tool_calls"] as? [[String: Any]]) ?? []
+                    AgentLog.log("llm", "← finish=\(choices.first?["finish_reason"] as? String ?? "?") tool_calls=\(calls.count) content=\(AgentLog.clip(content ?? "(none)", 400))")
+
+                    if useTools, rounds < 6, !calls.isEmpty {
+                        rounds += 1
+                        // MiniMax wants the full assistant message back (its thinking included) before the tool results
+                        working.append(message)
+                        for call in calls {
+                            let fn = call["function"] as? [String: Any]
+                            let argsText = fn?["arguments"] as? String ?? "{}"
+                            let args = (try? JSONSerialization.jsonObject(with: Data(argsText.utf8))) as? [String: Any] ?? [:]
+                            let out = await AgentTools.run(name: fn?["name"] as? String ?? "", arguments: args)
+                            working.append(["role": "tool", "tool_call_id": call["id"] ?? "", "content": out])
+                        }
+                        continue
+                    }
+                    // The model wrote the call inside its text: run it anyway
+                    if useTools, rounds < 6, let content, case let textCalls = TextToolCalls.extract(from: content), !textCalls.isEmpty {
+                        rounds += 1
+                        AgentLog.log("llm", "tool call found inside the text (\(textCalls.map(\.name).joined(separator: ", ")))")
+                        working.append(["role": "assistant", "content": content])
+                        var report = "Tool results:\n"
+                        for c in textCalls {
+                            report += "\(c.name): " + (await AgentTools.run(name: c.name, arguments: c.arguments)) + "\n"
+                        }
+                        working.append(["role": "user", "content": report])
+                        continue
+                    }
+                    guard let content else {
+                        throw NSError(domain: "ChatAPI", code: 0, userInfo: [NSLocalizedDescriptionKey: String(localized: "Unexpected response format")])
+                    }
+                    finalText = content
                 }
-                guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let choices = json["choices"] as? [[String: Any]],
-                      let message = choices.first?["message"] as? [String: Any],
-                      let content = message["content"] as? String else {
-                    throw NSError(domain: "ChatAPI", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unexpected response format"])
-                }
-                let trimmed = content.trimmingCharacters(in: .whitespacesAndNewlines)
+                AgentLog.log("chat", "final answer: \(AgentLog.clip(finalText ?? "", 300))")
+                // Reasoning models (MiniMax M3…) put their thinking in <think>…</think>: keep the answer only.
+                let trimmed = TextToolCalls.stripMarkup(finalText ?? "")
                 conversationMessages.append(["role": "assistant", "content": trimmed])
                 state.chatHistory.append(ChatMessage(role: .assistant, content: trimmed))
                 state.stateOverride = nil
@@ -443,11 +556,47 @@ final class ClaudeService {
         }
     }
 
+    // MARK: - Subscription chat through the official CLIs (Claude plan / ChatGPT plan)
+
+    func chatCLI(query: String, context: PromptContext?, state: AppState) async {
+        let provider = state.chatProvider
+        var userText = query
+        if shouldAttach(context), let ctx = context {
+            userText = await contextText(ctx, limit: 60_000) + "\n\n" + query
+        }
+
+        // The CLI is stateless: send the whole conversation as one transcript.
+        var transcript = systemPrompt + "\n\nConversation so far:\n"
+        for m in conversationMessages {
+            let role = (m["role"] as? String) == "assistant" ? "Assistant" : "User"
+            let text: String
+            if let s = m["content"] as? String { text = s }
+            else if let blocks = m["content"] as? [[String: Any]],
+                    let t = blocks.first(where: { ($0["type"] as? String) == "text" })?["text"] as? String { text = t }
+            else { continue }
+            transcript += "\(role): \(text)\n\n"
+        }
+        transcript += "User: \(userText)\n\nReply as the assistant to the last user message."
+        conversationMessages.append(["role": "user", "content": userText])
+
+        do {
+            let answer = try await CLIChat.shared.ask(provider, model: state.activeChatModel, prompt: transcript)
+            conversationMessages.append(["role": "assistant", "content": answer])
+            state.chatHistory.append(ChatMessage(role: .assistant, content: answer))
+            state.stateOverride = nil
+            state.view = .prompt
+            NotificationCenter.default.post(name: .triggerEmote, object: BotEmote.happy)
+        } catch {
+            conversationMessages.removeLast()
+            await showError(error.localizedDescription, state: state)
+        }
+    }
+
     // MARK: - Structured search (M8 — window attach + web search)
 
     func search(query: String, context: PromptContext?, state: AppState) async {
         guard let key = apiKey, !key.isEmpty else {
-            await showError("Anthropic API key missing. Open settings to configure it.", state: state)
+            await showError(String(localized: "Anthropic API key missing. Open settings to configure it."), state: state)
             return
         }
 
@@ -518,12 +667,12 @@ final class ClaudeService {
                     let id = AppState.shared.claudeModel
                     throw NSError(domain: "Claude", code: 0,
                         userInfo: [NSLocalizedDescriptionKey:
-                            "Model not found: \(id). Pick another one in Settings."])
+                            String(localized: "Model not found: \(id). Pick another one in Settings.")])
                 }
                 throw NSError(domain: "Claude", code: 0,
                     userInfo: [NSLocalizedDescriptionKey: errMsg])
             }
-            let msg = String(data: data, encoding: .utf8) ?? "unknown error"
+            let msg = String(data: data, encoding: .utf8) ?? String(localized: "unknown error")
             throw NSError(domain: "Claude", code: 0, userInfo: [NSLocalizedDescriptionKey: msg])
         }
         return data
@@ -534,7 +683,7 @@ final class ClaudeService {
     private func handleChatResult(_ data: Data, state: AppState) async {
         guard let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
               let content = json["content"] as? [[String: Any]] else {
-            await showError("Unexpected API response.", state: state)
+            await showError(String(localized: "Unexpected API response."), state: state)
             return
         }
 
@@ -543,7 +692,7 @@ final class ClaudeService {
 
         guard let textBlock = content.first(where: { $0["type"] as? String == "text" }),
               let text = textBlock["text"] as? String, !text.isEmpty else {
-            await showError("No response text.", state: state)
+            await showError(String(localized: "No response text."), state: state)
             return
         }
 
@@ -563,7 +712,7 @@ final class ClaudeService {
               let content = json["content"] as? [[String: Any]],
               let textBlock = content.first(where: { $0["type"] as? String == "text" }),
               let text = textBlock["text"] as? String else {
-            await showError("Unexpected API response.", state: state)
+            await showError(String(localized: "Unexpected API response."), state: state)
             return
         }
 
@@ -578,7 +727,7 @@ final class ClaudeService {
         // Try to parse as our JSON format
         if let resultData = cleanText.data(using: .utf8),
            let parsed = try? JSONSerialization.jsonObject(with: resultData) as? [String: Any] {
-            let title  = parsed["title"] as? String ?? "Result"
+            let title  = parsed["title"] as? String ?? String(localized: "Result")
             let note   = parsed["note"] as? String
             var items: [ResultItem] = []
             if let rawItems = parsed["items"] as? [[String: Any]] {
@@ -595,7 +744,7 @@ final class ClaudeService {
             // Fallback: show raw text in 3-line chunks
             let lines = cleanText.components(separatedBy: "\n").filter { !$0.isEmpty }.prefix(3)
             state.searchResult = SearchResult(
-                title: "Claude's response",
+                title: String(localized: "Claude's response"),
                 items: lines.map { ResultItem(label: $0, detail: "", url: nil) },
                 note: nil
             )
@@ -607,6 +756,7 @@ final class ClaudeService {
     }
 
     private func showError(_ message: String, state: AppState) async {
+        AgentLog.log("error", message)
         state.stateOverride = .error
         state.noteMessage = message
         state.view = .note

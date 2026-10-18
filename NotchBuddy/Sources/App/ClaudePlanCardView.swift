@@ -30,8 +30,8 @@ struct ClaudePlanCardView: View {
 
             // Gauge rows
             VStack(alignment: .leading, spacing: 5) {
-                GaugeRowView(label: "5 hours", window: usage?.fiveHour, now: now)
-                GaugeRowView(label: "Week",    window: usage?.sevenDay,  now: now, weekly: true)
+                GaugeRowView(label: String(localized: "5 hours"), window: usage?.fiveHour, now: now)
+                GaugeRowView(label: String(localized: "Week"), window: usage?.sevenDay,  now: now, weekly: true)
             }
             .padding(.top, 8)
             .padding(.leading, 108)
@@ -48,12 +48,12 @@ struct ClaudePlanCardView: View {
     }
 
     private var subtitleText: String {
-        guard let usage else { return "Waiting for a Claude Code reply" }
+        guard let usage else { return String(localized: "Waiting for a Claude Code reply") }
         let diff = now.timeIntervalSince(usage.updatedAt)
-        if diff < 60 { return "just now" }
+        if diff < 60 { return String(localized: "just now") }
         let mins = Int(diff / 60)
-        if mins < 60 { return "\(mins) min ago" }
-        return "\(mins / 60) h ago"
+        if mins < 60 { return String(localized: "\(mins) min ago") }
+        return String(localized: "\(mins / 60) h ago")
     }
 }
 
@@ -115,14 +115,14 @@ private struct GaugeRowView: View {
 
     private func resetLabel(_ w: PlanWindow) -> String {
         let secs = w.resetsAt.timeIntervalSince(now)
-        guard secs > 0 else { return "Resetting…" }
+        guard secs > 0 else { return String(localized: "Resetting…") }
         if weekly {
             return weeklyResetFormatter.string(from: w.resetsAt)
         } else {
             let h = Int(secs / 3600)
             let m = Int((secs.truncatingRemainder(dividingBy: 3600)) / 60)
-            if h > 0 { return "in \(h) h \(m)" }
-            return "in \(m) min"
+            if h > 0 { return String(localized: "in \(h) h \(m)") }
+            return String(localized: "in \(m) min")
         }
     }
 }

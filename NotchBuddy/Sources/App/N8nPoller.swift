@@ -16,7 +16,10 @@ final class N8nPoller: @unchecked Sendable {
         guard timer == nil else { return }
         let t = DispatchSource.makeTimerSource(queue: .global(qos: .background))
         t.schedule(deadline: .now() + 3, repeating: 15)
-        t.setEventHandler { [weak self] in self?.poll() }
+        t.setEventHandler { [weak self] in
+            guard IntegrationGate.isActive("integration_n8n") else { return }
+            self?.poll()
+        }
         t.resume()
         timer = t
     }
@@ -195,7 +198,9 @@ final class N8nPoller: @unchecked Sendable {
               let items    = main.first else { return nil }
 
         let count = items.count
-        let header = "→ \(lastNode) · \(count) item\(count == 1 ? "" : "s")"
+        let header = count == 1
+            ? String(localized: "→ \(lastNode) · \(count) item")
+            : String(localized: "→ \(lastNode) · \(count) items")
 
         // Preview first item's JSON keys (up to 4)
         if let firstItem = items.first,

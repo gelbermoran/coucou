@@ -5,6 +5,7 @@ options:
     macOS: "15.0"
   xcodeVersion: "27.0"
   createIntermediateGroups: true
+  developmentLanguage: en
 
 settings:
   base:
@@ -12,6 +13,8 @@ settings:
     ENABLE_HARDENED_RUNTIME: YES
     CODE_SIGN_STYLE: Manual
     OTHER_SWIFT_FLAGS: "-strict-concurrency=complete"
+    SWIFT_EMIT_LOC_STRINGS: YES
+    LOCALIZATION_PREFERS_STRING_CATALOGS: YES
   configs:
     Debug:
       CODE_SIGNING_REQUIRED: NO
@@ -55,6 +58,10 @@ targets:
       - path: Resources/sounds
         buildPhase: resources
         type: folder
+      - path: Resources/Localizable.xcstrings
+        buildPhase: resources
+      - path: Resources/InfoPlist.xcstrings
+        buildPhase: resources
     info:
       path: Resources/Info.plist
       properties:
@@ -67,8 +74,11 @@ targets:
         LSUIElement: YES
         NSHighResolutionCapable: YES
         NSSupportsAutomaticGraphicsSwitching: YES
-        NSAppleEventsUsageDescription: "Pour sauter au terminal, envoyer des mails et piloter Musique."
-        NSAccessibilityUsageDescription: "Pour lire le titre de la fenêtre active et l'attacher comme contexte."
+        NSAppleEventsUsageDescription: "To jump to the terminal, send emails and control Music."
+        NSMicrophoneUsageDescription: "To hear your voice questions and answer you out loud."
+        NSCalendarsFullAccessUsageDescription: "To read your calendar and schedule meetings when you ask."
+        NSRemindersFullAccessUsageDescription: "To add tasks to your Reminders when you ask."
+        NSAccessibilityUsageDescription: "To read the active window title and attach it as context."
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true
     settings:
@@ -91,6 +101,10 @@ targets:
       - path: Resources/sounds
         buildPhase: resources
         type: folder
+      - path: Resources/Localizable.xcstrings
+        buildPhase: resources
+      - path: Resources/InfoPlist.xcstrings
+        buildPhase: resources
     info:
       path: Resources/InfoAppStore.plist
       properties:
@@ -105,6 +119,9 @@ targets:
         NSSupportsAutomaticGraphicsSwitching: YES
         LSApplicationCategoryType: public.app-category.developer-tools
         ITSAppUsesNonExemptEncryption: NO
+        NSMicrophoneUsageDescription: "To hear your voice questions and answer you out loud."
+        NSCalendarsFullAccessUsageDescription: "To read your calendar and schedule meetings when you ask."
+        NSRemindersFullAccessUsageDescription: "To add tasks to your Reminders when you ask."
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true
     settings:

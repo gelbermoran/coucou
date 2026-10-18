@@ -15,7 +15,10 @@ final class VercelPoller: @unchecked Sendable {
         guard timer == nil else { return }
         let t = DispatchSource.makeTimerSource(queue: .global(qos: .background))
         t.schedule(deadline: .now() + 5, repeating: 30)
-        t.setEventHandler { [weak self] in self?.poll() }
+        t.setEventHandler { [weak self] in
+            guard IntegrationGate.isActive("integration_vercel") else { return }
+            self?.poll()
+        }
         t.resume()
         timer = t
     }

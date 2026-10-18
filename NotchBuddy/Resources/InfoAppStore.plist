@@ -31,8 +31,14 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>To read your calendar and schedule meetings when you ask.</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>To hear your voice questions and answer you out loud.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>To add tasks to your Reminders when you ask.</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
 </dict>

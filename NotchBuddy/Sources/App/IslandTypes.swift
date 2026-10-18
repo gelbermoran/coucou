@@ -12,6 +12,7 @@ enum IslandView: String, CaseIterable {
     case overview, empty, approval, question, error, finished
     case confused, upload, uploading, choose, mail, prompt
     case searching, result, note, settings, greeting
+    case confirm, timer, agenda   // agent: confirm an action / countdown / agenda and tasks
 }
 
 // MARK: - Bot State
@@ -31,6 +32,8 @@ enum BotEmote: String, CaseIterable {
 // MARK: - Approval info (pending PermissionRequest from Claude Code)
 
 struct ApprovalInfo: Sendable {
+    /// Unique per request: a click only acts on the card the user actually saw.
+    var requestID = UUID()
     var sessionId: String
     var tool: String
     var command: String
@@ -75,6 +78,11 @@ enum ChatProvider: String, CaseIterable, Codable {
     case openai    = "openai"
     case ollama    = "ollama"
     case lmstudio  = "lmstudio"
+    case minimax   = "minimax"
+    /// Claude plan (Pro/Max) through the official `claude` CLI — SSO login, no API key.
+    case claudeCLI = "claude_cli"
+    /// ChatGPT plan through the official `codex` CLI — SSO login, no API key.
+    case codexCLI  = "codex_cli"
 
     var displayName: String {
         switch self {
@@ -83,6 +91,9 @@ enum ChatProvider: String, CaseIterable, Codable {
         case .openai:    "OpenAI"
         case .ollama:    "Ollama"
         case .lmstudio:  "LM Studio"
+        case .minimax:   "MiniMax"
+        case .claudeCLI: "Claude plan"
+        case .codexCLI:  "ChatGPT plan"
         }
     }
 
@@ -93,6 +104,9 @@ enum ChatProvider: String, CaseIterable, Codable {
         case .openai:    "#10A37F"
         case .ollama:    "#FACC15"
         case .lmstudio:  "#A3E635"
+        case .minimax:   "#F23F5D"
+        case .claudeCLI: "#D97757"
+        case .codexCLI:  "#74AA9C"
         }
     }
 
@@ -103,6 +117,9 @@ enum ChatProvider: String, CaseIterable, Codable {
         case .openai:    "gpt-4o"
         case .ollama:    "llama3.2"
         case .lmstudio:  "local-model"
+        case .minimax:   "MiniMax-M3"
+        case .claudeCLI: "sonnet"
+        case .codexCLI:  "default"
         }
     }
 
@@ -113,8 +130,22 @@ enum ChatProvider: String, CaseIterable, Codable {
         case .openai:    "openai-api-key"
         case .ollama:    ""
         case .lmstudio:  ""
+        case .minimax:   "minimax-api-key"
+        case .claudeCLI: ""
+        case .codexCLI:  ""
         }
     }
+
+    /// Providers whose model list is fixed (no listing endpoint to call).
+    static let fixedModels: [ChatProvider: [(id: String, label: String)]] = [
+        .minimax: [("MiniMax-M3", "MiniMax M3"),
+                   ("MiniMax-M3.1-Flash-Preview", "MiniMax M3.1 Flash (preview)")],
+        .claudeCLI: [("sonnet", "Claude Sonnet"), ("opus", "Claude Opus"), ("haiku", "Claude Haiku")],
+        .codexCLI: [("default", String(localized: "Default model of your plan"))],
+    ]
+
+    /// Runs through an official CLI the user signed in to (no key, no token handled by Coucou).
+    var isCLI: Bool { self == .claudeCLI || self == .codexCLI }
 
     var isLocal: Bool {
         self == .ollama || self == .lmstudio
@@ -127,6 +158,9 @@ enum ChatProvider: String, CaseIterable, Codable {
         case .openai:    "ai_openai"
         case .ollama:    "ai_ollama"
         case .lmstudio:  "ai_lmstudio"
+        case .minimax:   "ai_minimax"
+        case .claudeCLI: "ai_claude_cli"
+        case .codexCLI:  "ai_codex_cli"
         }
     }
 
@@ -137,6 +171,9 @@ enum ChatProvider: String, CaseIterable, Codable {
         case "ai_openai":    self = .openai
         case "ai_ollama":    self = .ollama
         case "ai_lmstudio":  self = .lmstudio
+        case "ai_minimax":   self = .minimax
+        case "ai_claude_cli": self = .claudeCLI
+        case "ai_codex_cli": self = .codexCLI
         default:             return nil
         }
     }
@@ -184,6 +221,9 @@ enum IslandConst {
         .searching: ViewLayout(height: 160, botX: 52,  botY: nil, botDiameter: 44, agentMode: .column),
         .result:    ViewLayout(height: 160, botX: 52,  botY: nil, botDiameter: 44, agentMode: .column),
         .note:      ViewLayout(height: 160, botX: 60,  botY: nil, botDiameter: 50, agentMode: .column),
+        .confirm:   ViewLayout(height: 160, botX: 62,  botY: nil, botDiameter: 56, agentMode: .column),
+        .timer:     ViewLayout(height: 160, botX: 62,  botY: nil, botDiameter: 56, agentMode: .column),
+        .agenda:    ViewLayout(height: 176, botX: 56,  botY: nil, botDiameter: 46, agentMode: .column),
         .settings:  ViewLayout(height: 160, botX: 54,  botY: nil, botDiameter: 46, agentMode: .none),
         // Greeting: bot drawn by GreetingCanvasView; no BotPlacement needed
         .greeting:  ViewLayout(height: 150, botX: 320, botY: 90,  botDiameter: 0,  agentMode: .none),
