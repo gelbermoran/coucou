@@ -145,6 +145,19 @@ final class AppState: ObservableObject {
     @Published var moonshotChatModel: String = ChatProvider.moonshot.defaultModel {
         didSet { UserDefaults.standard.set(moonshotChatModel, forKey: "moonshotChatModel") }
     }
+    @Published var minimaxChatModel: String = ChatProvider.minimax.defaultModel {
+        didSet { UserDefaults.standard.set(minimaxChatModel, forKey: "minimaxChatModel") }
+    }
+    @Published var claudeCLIModel: String = ChatProvider.claudeCLI.defaultModel {
+        didSet { UserDefaults.standard.set(claudeCLIModel, forKey: "claudeCLIModel") }
+    }
+    @Published var codexCLIModel: String = ChatProvider.codexCLI.defaultModel {
+        didSet { UserDefaults.standard.set(codexCLIModel, forKey: "codexCLIModel") }
+    }
+    /// CLI providers the user signed in to from Settings (persisted; shown in the model picker).
+    @Published var enabledCLIProviders: Set<String> = [] {
+        didSet { UserDefaults.standard.set(Array(enabledCLIProviders), forKey: "enabledCLIProviders") }
+    }
     @Published var ollamaServerURL: String = "" {
         didSet { UserDefaults.standard.set(ollamaServerURL, forKey: "ollamaServerURL") }
     }
@@ -201,6 +214,11 @@ final class AppState: ObservableObject {
             }
             return
         }
+        // Fixed lists: MiniMax models and the CLI aliases need no network call
+        if let fixed = ChatProvider.fixedModels[provider] {
+            fetchedProviderModels[provider] = fixed
+            return
+        }
         // Remote providers: require API key
         guard let apiKey = KeychainStore.shared.get(provider.keychainKey), !apiKey.isEmpty else {
             providerModelFetchError[provider] = "No API key — add it in Settings."
@@ -217,7 +235,7 @@ final class AppState: ObservableObject {
             case .deepseek:  models = await ClaudeService.fetchOpenAICompatibleModels(baseURL: "https://api.deepseek.com/v1", apiKey: apiKey)
             case .qwen:      models = await ClaudeService.fetchOpenAICompatibleModels(baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1", apiKey: apiKey)
             case .moonshot:  models = await ClaudeService.fetchOpenAICompatibleModels(baseURL: "https://api.moonshot.cn/v1", apiKey: apiKey)
-            case .ollama, .lmstudio: models = []  // handled above
+            case .ollama, .lmstudio, .minimax, .claudeCLI, .codexCLI: models = []  // handled above
             }
             loadingProviderModels.remove(provider)
             if models.isEmpty {
@@ -249,7 +267,7 @@ final class AppState: ObservableObject {
                     if !models.contains(where: { $0.id == moonshotChatModel }) {
                         moonshotChatModel = models.first!.id
                     }
-                case .ollama, .lmstudio: break
+                case .ollama, .lmstudio, .minimax, .claudeCLI, .codexCLI: break
                 }
             }
         }
@@ -266,6 +284,9 @@ final class AppState: ObservableObject {
         case .deepseek:  return deepseekChatModel
         case .qwen:      return qwenChatModel
         case .moonshot:  return moonshotChatModel
+        case .minimax:   return minimaxChatModel
+        case .claudeCLI: return claudeCLIModel
+        case .codexCLI:  return codexCLIModel
         }
     }
 
@@ -400,10 +421,14 @@ final class AppState: ObservableObject {
     @Published var n8nRuns: [N8nRun] = []
 
     // Chat conversation history
-    @Published var chatHistory: [ChatMessage] = []
+    @Published var chatHistory: [ChatMessage] = [] {
+        didSet { ChatSessions.shared.historyChanged() }
+    }
 
     // Pending approval request from Claude Code hook
     @Published var pendingApproval: ApprovalInfo? = nil
+    /// An action the assistant wants to run (send email, WhatsApp, create event…): waits for a click.
+    @Published var pendingAction: AgentActionRequest? = nil
 
     // Pending AskUserQuestion from Claude Code hook
     @Published var pendingQuestion: AskQuestion? = nil {
@@ -534,6 +559,10 @@ final class AppState: ObservableObject {
         if let v = ud.string(forKey: "deepseekChatModel"), !v.isEmpty { deepseekChatModel = v }
         if let v = ud.string(forKey: "qwenChatModel"),     !v.isEmpty { qwenChatModel     = v }
         if let v = ud.string(forKey: "moonshotChatModel"), !v.isEmpty { moonshotChatModel = v }
+        if let v = ud.string(forKey: "minimaxChatModel"), !v.isEmpty { minimaxChatModel = v }
+        if let v = ud.string(forKey: "claudeCLIModel"), !v.isEmpty { claudeCLIModel = v }
+        if let v = ud.string(forKey: "codexCLIModel"), !v.isEmpty { codexCLIModel = v }
+        if let v = ud.stringArray(forKey: "enabledCLIProviders") { enabledCLIProviders = Set(v) }
         if let v = ud.string(forKey: "ollamaServerURL"), !v.isEmpty { ollamaServerURL = v }
         if let v = ud.string(forKey: "lmstudioServerURL"), !v.isEmpty { lmstudioServerURL = v }
         // Migrate old 60s default → 15s
@@ -917,7 +946,7 @@ struct NotionPage: Identifiable {
 
 // MARK: - Chat
 
-enum ChatRole { case user, assistant }
+enum ChatRole { case user, assistant, action }   // action = a small note of something Mochi did
 
 struct ChatMessage: Identifiable, Equatable {
     let id = UUID()

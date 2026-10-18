@@ -15,6 +15,9 @@ enum IslandView: String, CaseIterable {
     case listening    // voice wake detected — "À l'écoute…" with live transcript
     case voiceResult  // voice command executed — "✓ Musique lancée" for ~2 s
     case capture      // a screen capture just taken (⌃⌥X): paste, copy, annotate, ask Claude
+    case confirm      // assistant: an action (email, message, event…) waits for a click
+    case timer        // assistant: countdown / Pomodoro
+    case agenda       // assistant: today's agenda and pending tasks
 }
 
 // MARK: - Bot State
@@ -102,6 +105,11 @@ enum ChatProvider: String, CaseIterable, Codable {
     case deepseek  = "deepseek"
     case qwen      = "qwen"
     case moonshot  = "moonshot"
+    case minimax   = "minimax"
+    /// Claude plan (Pro/Max) through the official `claude` CLI — SSO login, no API key.
+    case claudeCLI = "claude_cli"
+    /// ChatGPT plan through the official `codex` CLI — SSO login, no API key.
+    case codexCLI  = "codex_cli"
 
     var displayName: String {
         switch self {
@@ -113,6 +121,9 @@ enum ChatProvider: String, CaseIterable, Codable {
         case .deepseek:  "DeepSeek"
         case .qwen:      "Qwen"
         case .moonshot:  "Moonshot"
+        case .minimax:   "MiniMax"
+        case .claudeCLI: "Claude plan"
+        case .codexCLI:  "ChatGPT plan"
         }
     }
 
@@ -126,6 +137,9 @@ enum ChatProvider: String, CaseIterable, Codable {
         case .deepseek:  "#5B8FF9"
         case .qwen:      "#FF6A00"
         case .moonshot:  "#7C5CFC"
+        case .minimax:   "#F23F5D"
+        case .claudeCLI: "#D97757"
+        case .codexCLI:  "#74AA9C"
         }
     }
 
@@ -139,6 +153,9 @@ enum ChatProvider: String, CaseIterable, Codable {
         case .deepseek:  "deepseek-chat"
         case .qwen:      "qwen-max"
         case .moonshot:  "moonshot-v1-32k"
+        case .minimax:   "MiniMax-M3"
+        case .claudeCLI: "sonnet"
+        case .codexCLI:  "default"
         }
     }
 
@@ -152,8 +169,22 @@ enum ChatProvider: String, CaseIterable, Codable {
         case .deepseek:  "deepseek-api-key"
         case .qwen:      "qwen-api-key"
         case .moonshot:  "moonshot-api-key"
+        case .minimax:   "minimax-api-key"
+        case .claudeCLI: ""
+        case .codexCLI:  ""
         }
     }
+
+    /// Runs through an official CLI the user signed in to (no key, no token handled by Coucou).
+    var isCLI: Bool { self == .claudeCLI || self == .codexCLI }
+
+    /// Providers whose model list is fixed (no listing endpoint to call).
+    static let fixedModels: [ChatProvider: [(id: String, label: String)]] = [
+        .minimax: [("MiniMax-M3", "MiniMax M3"),
+                   ("MiniMax-M3.1-Flash-Preview", "MiniMax M3.1 Flash (preview)")],
+        .claudeCLI: [("sonnet", "Claude Sonnet"), ("opus", "Claude Opus"), ("haiku", "Claude Haiku")],
+        .codexCLI: [("default", "Default model of your plan")],
+    ]
 
     var isLocal: Bool {
         self == .ollama || self == .lmstudio
@@ -169,6 +200,9 @@ enum ChatProvider: String, CaseIterable, Codable {
         case .deepseek:  "ai_deepseek"
         case .qwen:      "ai_qwen"
         case .moonshot:  "ai_moonshot"
+        case .minimax:   "ai_minimax"
+        case .claudeCLI: "ai_claude_cli"
+        case .codexCLI:  "ai_codex_cli"
         }
     }
 
@@ -182,6 +216,9 @@ enum ChatProvider: String, CaseIterable, Codable {
         case "ai_deepseek":  self = .deepseek
         case "ai_qwen":      self = .qwen
         case "ai_moonshot":  self = .moonshot
+        case "ai_minimax":   self = .minimax
+        case "ai_claude_cli": self = .claudeCLI
+        case "ai_codex_cli": self = .codexCLI
         default:             return nil
         }
     }
@@ -240,6 +277,10 @@ enum IslandConst {
         .voiceResult:  ViewLayout(height: 160, botX: 68,  botY: nil, botDiameter: 58, agentMode: .none),
         // Screen capture: Mochi on the left (he just swallowed it), the image and what to do with it
         .capture:      ViewLayout(height: 160, botX: 58,  botY: nil, botDiameter: 52, agentMode: .none),
+        // Assistant: confirm an action, countdown, agenda + tasks
+        .confirm:      ViewLayout(height: 160, botX: 62,  botY: nil, botDiameter: 56, agentMode: .column),
+        .timer:        ViewLayout(height: 160, botX: 62,  botY: nil, botDiameter: 56, agentMode: .column),
+        .agenda:       ViewLayout(height: 176, botX: 56,  botY: nil, botDiameter: 46, agentMode: .column),
     ]
 
     // Project colors — keyed by lowercase display name or slug

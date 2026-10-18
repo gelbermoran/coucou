@@ -46,12 +46,16 @@
 	<string>Pour sauter au terminal, envoyer des mails et piloter Musique et Spotify.</string>
 	<key>NSAudioCaptureUsageDescription</key>
 	<string>Coucou records what your Mac plays only while you note a call, to write down what the other people say.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>To read your calendar and schedule meetings when you ask.</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Coucou looks up an email address when you ask it, by voice, to prepare an email.</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Coucou uses the microphone when you dictate, and to note your calls when you ask it to.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>To add tasks to your Reminders when you ask.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Coucou turns your voice into the text of a chat message.</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>

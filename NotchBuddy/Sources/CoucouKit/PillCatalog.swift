@@ -105,6 +105,12 @@ enum PillCatalog {
               category: .ai,        subtitle: "Chat",         source: .n8n),
         .init(id: "ai_lmstudio",         name: "LM Studio",   color: ChatProvider.lmstudio.accentHex,
               category: .ai,        subtitle: "Chat",         source: .n8n),
+        .init(id: "ai_minimax",          name: "MiniMax",     color: ChatProvider.minimax.accentHex,
+              category: .ai,        subtitle: "Chat",         source: .n8n),
+        .init(id: "ai_claude_cli",       name: "Claude plan", color: ChatProvider.claudeCLI.accentHex,
+              category: .ai,        subtitle: "Chat",         source: .n8n, githubOnly: true),
+        .init(id: "ai_codex_cli",        name: "ChatGPT plan", color: ChatProvider.codexCLI.accentHex,
+              category: .ai,        subtitle: "Chat",         source: .n8n, githubOnly: true),
         // ── Services ─────────────────────────────────────────────────────────
         .init(id: "integration_resend",  name: "Resend",      color: "#22C55E",
               category: .service,   subtitle: "Integration",  source: .n8n),

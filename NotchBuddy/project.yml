@@ -149,6 +149,8 @@ targets:
         NSSpeechRecognitionUsageDescription: "Coucou turns your voice into the text of a chat message."
         NSAccessibilityUsageDescription: "Pour lire le titre de la fenêtre active et l'attacher comme contexte."
         NSContactsUsageDescription: "Coucou looks up an email address when you ask it, by voice, to prepare an email."
+        NSCalendarsFullAccessUsageDescription: "To read your calendar and schedule meetings when you ask."
+        NSRemindersFullAccessUsageDescription: "To add tasks to your Reminders when you ask."
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true
         CFBundleLocalizations:
@@ -228,6 +230,8 @@ targets:
         NSSupportsAutomaticGraphicsSwitching: YES
         LSApplicationCategoryType: public.app-category.developer-tools
         ITSAppUsesNonExemptEncryption: NO
+        NSCalendarsFullAccessUsageDescription: "To read your calendar and schedule meetings when you ask."
+        NSRemindersFullAccessUsageDescription: "To add tasks to your Reminders when you ask."
         NSAppTransportSecurity:
           NSAllowsLocalNetworking: true
         CFBundleLocalizations:

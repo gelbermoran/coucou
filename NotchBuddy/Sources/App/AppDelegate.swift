@@ -117,13 +117,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(withTitle: String(localized: "hub.menu"), action: #selector(openFlowHub), keyEquivalent: "")
         #endif
         menu.addItem(withTitle: NSLocalizedString("Settings…", comment: ""), action: #selector(openSettings), keyEquivalent: ",")
+        menu.addItem(withTitle: String(localized: "Open assistant log"), action: #selector(openAgentLog), keyEquivalent: "")
         menu.addItem(.separator())
         menu.addItem(withTitle: NSLocalizedString("Quit", comment: ""), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
 
         statusItem?.menu = menu
+
+        // Countdown in the menu bar while a timer runs
+        TimerEngine.shared.onMenuTitle = { [weak self] title in
+            self?.statusItem?.button?.title = title.map { " " + $0 } ?? ""
+            self?.statusItem?.button?.imagePosition = title == nil ? .imageOnly : .imageLeading
+        }
+        ReminderScheduler.shared.install()
     }
 
     // MARK: - Actions
+
+    @objc private func openAgentLog() { AgentLog.reveal() }
 
     @objc private func toggleDemoMode() {
         if DemoEngine.shared.isActive { DemoEngine.shared.stop() }
@@ -295,6 +305,40 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         #endif
         CryptoController.shared.start()
         PortfolioController.shared.start()
+
+        #if DEBUG
+        // Debug builds only: `open Coucou.app --args -debugCommand "timer 5 seconds"` runs a chat message at launch
+        if let cmd = UserDefaults.standard.string(forKey: "debugCommand"), !cmd.isEmpty {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 3_000_000_000)
+                AgentLog.log("debug", "running debugCommand: \(cmd)")
+                AppState.shared.chatHistory.append(ChatMessage(role: .user, content: cmd))
+                await ClaudeService.shared.chat(query: cmd, context: nil, state: AppState.shared)
+            }
+        }
+        // `-debugChats 1` exercises the multi-chat store and logs what it finds
+        if UserDefaults.standard.bool(forKey: "debugChats") {
+            Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 2_000_000_000)
+                let st = AppState.shared, cs = ChatSessions.shared
+                @MainActor func report(_ what: String) {
+                    AgentLog.log("debug", "\(what): history=\(st.chatHistory.map { $0.content }) listed=\(cs.listed.map { $0.title.isEmpty ? "(empty)" : $0.title })")
+                }
+                report("start")
+                st.chatHistory.append(ChatMessage(role: .user, content: "primer chat pregunta"))
+                st.chatHistory.append(ChatMessage(role: .assistant, content: "respuesta uno"))
+                report("after chat 1")
+                cs.newChat()
+                report("after newChat")
+                st.chatHistory.append(ChatMessage(role: .user, content: "segundo chat"))
+                report("after chat 2")
+                if let first = cs.listed.first(where: { $0.title.hasPrefix("primer") }) { cs.switchTo(first.id) }
+                report("switched back to 1")
+                cs.clearCurrent()
+                report("cleared chat 1")
+            }
+        }
+        #endif
     }
 }
 

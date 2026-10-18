@@ -24,5 +24,7 @@
     <string>Production</string>
     <key>com.apple.developer.aps-environment</key>
     <string>production</string>
+	<key>com.apple.security.personal-information.calendars</key>
+	<true/>
 </dict>
 </plist>

@@ -45,6 +45,9 @@ struct IslandViewContent: View {
             #else
             EmptyView()
             #endif
+        case .confirm:   ActionConfirmView(state: state)
+        case .timer:     TimerCardView()
+        case .agenda:    AgendaCardView(state: state)
         }
     }
 }
@@ -284,6 +287,12 @@ struct OverviewView: View {
             switchChatProvider(.ollama)
         case "ai_lmstudio":
             switchChatProvider(.lmstudio)
+        case "ai_minimax":
+            switchChatProvider(.minimax)
+        case "ai_claude_cli":
+            switchChatProvider(.claudeCLI)
+        case "ai_codex_cli":
+            switchChatProvider(.codexCLI)
         case "integration_music":
             #if !APPSTORE
             MusicController.shared.openMusic()
@@ -1347,6 +1356,9 @@ struct PromptView: View {
     @State private var text: String = ""
     @FocusState private var focused: Bool
     @State private var showModelPicker = false
+    @State private var showChats = false
+    @State private var showActions = false
+    @ObservedObject private var chats = ChatSessions.shared
 
     #if !APPSTORE
     @State private var dictation = MacDictation()
@@ -1400,9 +1412,53 @@ struct PromptView: View {
                     .frame(maxHeight: .infinity)
                 } else {
                     Spacer()
+                    if AgentTools.enabled { AssistantChips(state: state) }
                 }
 
-                HStack(spacing: 0) {
+                HStack(spacing: 6) {
+                    // Chats: switch, new, clear
+                    Button { showChats.toggle() } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "bubble.left.and.bubble.right").font(.system(size: 9))
+                            Text((chats.current?.title).flatMap { $0.isEmpty ? nil : $0 } ?? String(localized: "New chat"))
+                                .font(.system(size: 10.5, weight: .medium))
+                                .lineLimit(1)
+                                .frame(maxWidth: 150, alignment: .leading)
+                            Image(systemName: "chevron.up.chevron.down").font(.system(size: 8))
+                        }
+                        .foregroundColor(Color(hex: "#7B8089"))
+                        .padding(.horizontal, 8).padding(.vertical, 4)
+                        .background(Color.white.opacity(0.06))
+                        .clipShape(Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .popover(isPresented: $showChats, arrowEdge: .bottom) {
+                        ChatsPopover(isPresented: $showChats)
+                    }
+                    Button { chats.newChat(); focused = true } label: {
+                        Image(systemName: "plus").font(.system(size: 9, weight: .semibold))
+                            .foregroundColor(Color(hex: "#7B8089"))
+                            .frame(width: 22, height: 22)
+                            .background(Color.white.opacity(0.06)).clipShape(Circle())
+                    }
+                    .buttonStyle(.plain)
+                    .help(String(localized: "New chat"))
+                    if AgentTools.enabled {
+                        Button { showActions.toggle() } label: {
+                            Image(systemName: "bolt.fill").font(.system(size: 9, weight: .semibold))
+                                .foregroundColor(Color(hex: "#F5A524"))
+                                .frame(width: 22, height: 22)
+                                .background(Color.white.opacity(0.06)).clipShape(Circle())
+                        }
+                        .buttonStyle(.plain)
+                        .help(String(localized: "Actions"))
+                        .popover(isPresented: $showActions, arrowEdge: .bottom) {
+                            ActionsPopover(state: state, isPresented: $showActions) { sentence in
+                                text = sentence
+                                focused = true
+                            }
+                        }
+                    }
                     Spacer()
                     Button {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
@@ -1462,6 +1518,13 @@ struct PromptView: View {
                     }
                     #endif
 
+                    #if !APPSTORE
+                    // Talk to Mochi and hear the answer (MiniMax voice) — only when a MiniMax key is set
+                    if KeychainStore.shared.get("minimax-api-key")?.isEmpty == false {
+                        VoiceMicButton(accent: Color(hex: state.chatProvider.accentHex))
+                    }
+                    #endif
+
                     Button(action: sendMessage) {
                         Image(systemName: "arrow.up")
                             .font(.system(size: 11, weight: .semibold))
@@ -1499,8 +1562,7 @@ struct PromptView: View {
         .onReceive(NotificationCenter.default.publisher(for: .islandNewConversation)) { _ in
             guard state.view == .prompt else { return }
             text = ""
-            state.chatHistory = []
-            ClaudeService.shared.clearConversation()
+            chats.newChat()          // keeps the previous chat in the list
             focused = true
         }
     }
@@ -1570,6 +1632,7 @@ struct ModelPickerView: View {
             let visibleProviders = ChatProvider.allCases.filter { p in
                 if p == .ollama   { return !AppState.shared.ollamaServerURL.isEmpty   || state.chatProvider == .ollama }
                 if p == .lmstudio { return !AppState.shared.lmstudioServerURL.isEmpty || state.chatProvider == .lmstudio }
+                if p.isCLI        { return state.enabledCLIProviders.contains(p.rawValue) || state.chatProvider == p }
                 return true
             }
             ChipFlowLayout(spacing: 6) {
@@ -1660,6 +1723,9 @@ struct ModelPickerView: View {
                             case .deepseek:  state.deepseekChatModel = model.id
                             case .qwen:      state.qwenChatModel = model.id
                             case .moonshot:  state.moonshotChatModel = model.id
+                            case .minimax:   state.minimaxChatModel = model.id
+                            case .claudeCLI: state.claudeCLIModel = model.id
+                            case .codexCLI:  state.codexCLIModel = model.id
                             }
                             isPresented = false
                             SoundEngine.shared.play("blip")
@@ -1699,7 +1765,16 @@ struct ChatBubble: View {
     var body: some View {
         if !message.content.isEmpty {
             HStack(alignment: .top) {
-                if message.role == .user {
+                if message.role == .action {
+                    Text(message.content)
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundColor(Color(hex: "#8E939C"))
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 8).padding(.vertical, 3)
+                        .background(Color.white.opacity(0.05))
+                        .clipShape(Capsule())
+                    Spacer(minLength: 8)
+                } else if message.role == .user {
                     Spacer(minLength: 32)
                     Text(message.content)
                         .font(.system(size: 12.5))
@@ -1945,6 +2020,9 @@ struct IntegrationCardView: View {
         case "ai_openai":     return KeychainStore.shared.get("openai-api-key")    != nil
         case "ai_ollama":     return !AppState.shared.ollamaServerURL.isEmpty
         case "ai_lmstudio":   return !AppState.shared.lmstudioServerURL.isEmpty
+        case "ai_minimax":    return KeychainStore.shared.get("minimax-api-key")   != nil
+        case "ai_claude_cli": return AppState.shared.enabledCLIProviders.contains(ChatProvider.claudeCLI.rawValue)
+        case "ai_codex_cli":  return AppState.shared.enabledCLIProviders.contains(ChatProvider.codexCLI.rawValue)
         case "integration_resend":  return KeychainStore.shared.get("resend-api-key") != nil
         case "integration_n8n":     return KeychainStore.shared.get("n8n-api-key")    != nil
         case "integration_vercel":  return KeychainStore.shared.get("vercel-token")   != nil
@@ -2115,8 +2193,12 @@ struct IntegrationCardView: View {
                 case "ai_anthropic": model = appState.claudeModel
                 case "ai_google":    model = appState.googleChatModel
                 case "ai_openai":    model = appState.openAIChatModel
+                case "ai_minimax":   model = appState.minimaxChatModel
+                case "ai_claude_cli": model = appState.claudeCLIModel
+                case "ai_codex_cli":  model = appState.codexCLIModel
                 default:             model = ""
                 }
+                if provider.isCLI { return String(localized: "Signed in · \(model)") }
                 return String(localized: "Key configured · \(model)")
             }
             return String(localized: "Connected · loading…")
@@ -2124,6 +2206,7 @@ struct IntegrationCardView: View {
             if isHooks { return String(localized: "Hooks not installed") }
             if isAI {
                 let provider = ChatProvider(pillID: task.id)!
+                if provider.isCLI { return String(localized: "Not signed in") }
                 return provider.isLocal ? String(localized: "Not connected") : String(localized: "Key not configured")
             }
             return String(localized: "Key not configured")

@@ -128,6 +128,15 @@ jobs:
       - name: Conversation context tests
         run: bash scripts/test-conversation-context.sh
 
+      - name: Test assistant commands (timer, reminder, agenda, tasks)
+        run: bash scripts/test-agent-intent.sh
+
+      - name: Test assistant helpers (dates, API template, tool calls in text)
+        run: bash scripts/test-agent-pure.sh
+
+      - name: Test file reading for the chat (text, PDF, OCR, Word)
+        run: bash scripts/test-file-extract.sh
+
       - name: Build
         run: |
           set -o pipefail

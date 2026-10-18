@@ -11,7 +11,7 @@ func coucouHooksPresent(inSettings settings: [String: Any]) -> Bool {
     return sessionStart.contains { group in
         (group["hooks"] as? [[String: Any]])?.contains { hook in
             guard let command = hook["command"] as? String else { return false }
-            return command.contains("NotchBuddy") || command.contains("coucou")
+            return command.contains("nb-hook")
         } ?? false
     }
 }

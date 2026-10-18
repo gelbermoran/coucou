@@ -91,6 +91,9 @@ struct SettingsView: View {
     @State private var deepseekKey: String = KeychainStore.shared.get("deepseek-api-key") ?? ""
     @State private var qwenKey: String     = KeychainStore.shared.get("qwen-api-key") ?? ""
     @State private var moonshotKey: String = KeychainStore.shared.get("moonshot-api-key") ?? ""
+    @State private var minimaxKey: String  = KeychainStore.shared.get("minimax-api-key") ?? ""
+    @State private var cliBusy: Set<ChatProvider> = []
+    @ObservedObject private var chatSessions = ChatSessions.shared
     @State private var ollamaURL:    String = AppState.shared.ollamaServerURL
     @State private var lmstudioURL:  String = AppState.shared.lmstudioServerURL
     @State private var connectingOllama:    Bool = false
@@ -189,6 +192,7 @@ struct SettingsView: View {
                         SettingsSidebarRow(title: "Active pills", icon: "square.grid.2x2.fill",              color: "#F5A524").tag("activepills")
                         SettingsSidebarRow(title: "Agents",       icon: "terminal.fill",                     color: "#3B9EFF").tag("agents")
                         SettingsSidebarRow(title: "Chat",         icon: "bubble.left.and.bubble.right.fill", color: "#E07950").tag("chat")
+                        SettingsSidebarRow(title: "Assistant",    icon: "wand.and.stars",                    color: "#F23F5D").tag("assistant")
                         SettingsSidebarRow(title: "Integrations", icon: "puzzlepiece.extension.fill",        color: "#7C5CFF").tag("integrations")
                         #if !APPSTORE
                         SettingsSidebarRow(title: "Voice",        icon: "mic.fill",                          color: "#F97316").tag("voice")
@@ -265,6 +269,7 @@ struct SettingsView: View {
         case "activepills":  return String(localized: "Active pills")
         case "agents":       return String(localized: "Agents")
         case "chat":         return String(localized: "Chat")
+        case "assistant":    return String(localized: "Assistant")
         case "integrations": return String(localized: "Integrations")
         case "voice":        return String(localized: "Voice")
         case "shortcuts":    return String(localized: "Shortcuts")
@@ -277,6 +282,7 @@ struct SettingsView: View {
         case "activepills":  activePillsSection
         case "agents":       agentsSection
         case "chat":         chatSection
+        case "assistant":    AssistantSettingsView()
         case "integrations": integrationsSection
         #if !APPSTORE
         case "voice":        voiceSection
@@ -1140,9 +1146,59 @@ struct SettingsView: View {
                     statusMessage = "Moonshot key saved."
                 }
                 .buttonStyle(.borderedProminent)
+
+                Divider()
+
+                HStack(spacing: 8) {
+                    Circle().fill(Color(hex: ChatProvider.minimax.accentHex)).frame(width: 8, height: 8)
+                    Text("MiniMax").font(.system(size: 12, weight: .semibold))
+                }
+                SecureField(String(localized: "API key (MiniMax platform)"), text: $minimaxKey)
+                    .textFieldStyle(.roundedBorder)
+                Button(String(localized: "Save")) {
+                    KeychainStore.shared.set("minimax-api-key", value: minimaxKey)
+                    statusMessage = String(localized: "✓ MiniMax key saved.")
+                }
+                .buttonStyle(.borderedProminent)
+                Text(String(localized: "Models: MiniMax-M3 and MiniMax-M3.1-Flash-Preview."))
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
             }
             .padding(.vertical, 4)
         }
+
+        #if !APPSTORE
+        GroupBox(String(localized: "Subscription (official CLI)")) {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(String(localized: "Use your Claude or ChatGPT plan instead of an API key. Coucou runs the official `claude` and `codex` tools, which open their own sign-in window. Coucou never sees your token."))
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+                cliRow(.claudeCLI, title: String(localized: "Claude plan (Claude Code)"))
+                Divider()
+                cliRow(.codexCLI, title: String(localized: "ChatGPT plan (Codex)"))
+            }
+            .padding(.vertical, 4)
+        }
+        #endif
+
+        GroupBox(String(localized: "Chat history")) {
+            VStack(alignment: .leading, spacing: 10) {
+                Toggle(String(localized: "Remember my chats on this Mac"), isOn: $chatSessions.remember)
+                Text(String(localized: "Chats are kept in a private file on this Mac and never leave it, except the messages you send to the model you choose. Turn this off to forget them."))
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+                Button(String(localized: "Delete all chats"), role: .destructive) {
+                    chatSessions.deleteAll()
+                    statusMessage = String(localized: "All chats deleted.")
+                }
+                .buttonStyle(.bordered)
+            }
+            .padding(.vertical, 4)
+        }
+
+        #if !APPSTORE
+        VoiceSettingsGroup()
+        #endif
 
         GroupBox(String(localized: "chat.local.title")) {
             VStack(alignment: .leading, spacing: 12) {
@@ -1693,6 +1749,73 @@ struct SettingsView: View {
             statusMessage = String(localized: "status.hooks-removed")
         } catch {
             statusMessage = "❌ \(error.localizedDescription)"
+        }
+    }
+    #endif
+
+    #if !APPSTORE
+    @ViewBuilder private func cliRow(_ provider: ChatProvider, title: String) -> some View {
+        let enabled = state.enabledCLIProviders.contains(provider.rawValue)
+        HStack(spacing: 8) {
+            Circle().fill(Color(hex: provider.accentHex)).frame(width: 8, height: 8)
+            Text(title).font(.system(size: 12, weight: .semibold))
+            if enabled {
+                Text("Signed in")
+                    .font(.system(size: 10))
+                    .foregroundColor(Color(hex: "#22C55E"))
+            }
+        }
+        HStack {
+            Button(cliBusy.contains(provider) ? String(localized: "Waiting for sign-in…") : (enabled ? String(localized: "Sign in again") : String(localized: "Sign in"))) {
+                Task { await cliSignIn(provider, title: title) }
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(cliBusy.contains(provider))
+            Button("Check") {
+                Task { await cliCheck(provider, title: title) }
+            }
+            .buttonStyle(.bordered)
+            .disabled(cliBusy.contains(provider))
+            if enabled {
+                Button("Remove from chat") {
+                    state.enabledCLIProviders.remove(provider.rawValue)
+                    if state.chatProvider == provider { state.chatProvider = .anthropic }
+                    statusMessage = String(localized: "\(title) removed from the chat.")
+                }
+                .buttonStyle(.bordered)
+            }
+        }
+    }
+
+    private func cliSignIn(_ provider: ChatProvider, title: String) async {
+        cliBusy.insert(provider)
+        statusMessage = String(localized: "Complete the sign-in in the browser window…")
+        defer { cliBusy.remove(provider) }
+        do {
+            let ok = try await CLIChat.shared.signIn(provider)
+            applyCLIResult(provider, ok: ok, title: title)
+        } catch {
+            statusMessage = "❌ \(error.localizedDescription)"
+        }
+    }
+
+    private func cliCheck(_ provider: ChatProvider, title: String) async {
+        cliBusy.insert(provider)
+        defer { cliBusy.remove(provider) }
+        do {
+            applyCLIResult(provider, ok: try await CLIChat.shared.isSignedIn(provider), title: title)
+        } catch {
+            statusMessage = "❌ \(error.localizedDescription)"
+        }
+    }
+
+    private func applyCLIResult(_ provider: ChatProvider, ok: Bool, title: String) {
+        if ok {
+            state.enabledCLIProviders.insert(provider.rawValue)
+            statusMessage = String(localized: "✓ \(title) signed in. Pick it from the model selector in the chat.")
+        } else {
+            state.enabledCLIProviders.remove(provider.rawValue)
+            statusMessage = String(localized: "Not signed in to \(title). Press Sign in.")
         }
     }
     #endif

@@ -44,8 +44,12 @@
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>To read your calendar and schedule meetings when you ask.</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>To add tasks to your Reminders when you ask.</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
 </dict>
